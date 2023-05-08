@@ -5,7 +5,7 @@ namespace DocumentsStore.Api.Controllers;
 
 public class BaseController : ControllerBase
 {
-    protected ActionResult ErrorResult<T>(UseCaseResult<T> result) =>
+    protected IActionResult ErrorResult<T>(UseCaseResult<T> result) =>
         result.Error switch
         {
             ErrorType.NotFound => NotFound(result.ErrorMessage),
@@ -14,7 +14,7 @@ public class BaseController : ControllerBase
             _ => StatusCode(StatusCodes.Status500InternalServerError)
         };
 
-    protected ActionResult UseCaseActionResult<T, TOutput>(UseCaseResult<T> result,
+    protected IActionResult UseCaseActionResult<T, TOutput>(UseCaseResult<T> result,
         Func<T, TOutput> converter)
     {
         if (result.Result is null)

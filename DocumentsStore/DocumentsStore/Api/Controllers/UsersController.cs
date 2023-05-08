@@ -11,20 +11,26 @@ namespace DocumentsStore.Api.Controllers
         private readonly IGetUserById _getUserById;
         private readonly ICreateUser _createUser;
         private readonly IGetAllUsers _getAllUsers;
+        private readonly IUpdateUser _updateUser;
+        private readonly IDeleteUser _deleteUser;
 
         public UsersController(
             IGetAllUsers getAllUsers,
             IGetUserById getUserById,
-            ICreateUser createUser)
+            ICreateUser createUser, 
+            IUpdateUser updateUser, 
+            IDeleteUser deleteUser)
         {
             _getAllUsers = getAllUsers;
             _getUserById = getUserById;
             _createUser = createUser;
+            _updateUser = updateUser;
+            _deleteUser = deleteUser;
         }
         
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<UserDto>), 200)]
-        public async Task<ActionResult> Get(
+        public async Task<IActionResult> Get(
             CancellationToken cancellationToken,
             [FromQuery] int take = 100,
             [FromQuery] int skip = 0)
@@ -36,7 +42,7 @@ namespace DocumentsStore.Api.Controllers
 
         [HttpGet("{id}", Name = "Get")]
         [ProducesResponseType(typeof(UserDto), 200)]
-        public async Task<ActionResult> Get(int id, CancellationToken cancellationToken)
+        public async Task<IActionResult> Get(int id, CancellationToken cancellationToken)
         {
             var result = await _getUserById.ExecuteAsync(id, cancellationToken);
 
@@ -45,7 +51,7 @@ namespace DocumentsStore.Api.Controllers
 
         [HttpPost]
         [ProducesResponseType(typeof(UserDto), 200)]
-        public async Task<ActionResult> Post([FromBody] UserDto user, CancellationToken cancellationToken)
+        public async Task<IActionResult> Post([FromBody] UserDto user, CancellationToken cancellationToken)
         {
             var result = await _createUser.ExecuteAsync(
                 user.ConvertToUser(), 
@@ -54,20 +60,25 @@ namespace DocumentsStore.Api.Controllers
             return UseCaseActionResult(result, UserDto.CreateFromUser);
         }
 
-        [HttpPost("{id}/add-to-group/{groupId}", Name = "AddUserToGroup")]
-        public async Task<ActionResult> AddToGroup(int id, int groupId, CancellationToken cancellationToken)
-        {
-            return Ok();
-        }
-
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] UserDto user)
+        [ProducesResponseType(typeof(UserDto), 200)]
+        public async Task<IActionResult> Put(int id, [FromBody] UserDto user, CancellationToken cancellationToken)
         {
+            var result = await _updateUser.ExecuteAsync(
+                id,
+                user.ConvertToUser(),
+                cancellationToken);
+
+            return UseCaseActionResult(result, UserDto.CreateFromUser);
         }
 
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        [ProducesResponseType(typeof(UserDto), 200)]
+        public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
         {
+            var result = await _deleteUser.ExecuteAsync(id, cancellationToken);
+
+            return UseCaseActionResult(result, UserDto.CreateFromUser);
         }
     }
 }
