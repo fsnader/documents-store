@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 using DocumentsStore.Repositories;
-using DocumentsStore.UseCases.Users;
+using DocumentsStore.UseCases;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -1,6 +1,7 @@
+using DocumentsStore.UseCases.Users;
 using DocumentsStore.UseCases.Users.Abstractions;
 
-namespace DocumentsStore.UseCases.Users;
+namespace DocumentsStore.UseCases;
 
 public static class UseCasesInstallers
 {
