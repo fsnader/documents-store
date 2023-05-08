@@ -15,7 +15,9 @@ public static class UseCasesInstallers
             .AddScoped<IGetUserById, GetUserById>()
             .AddScoped<ICreateUser, CreateUser>()
             .AddScoped<IDeleteUser, DeleteUser>()
-            .AddScoped<IUpdateUser, UpdateUser>();
+            .AddScoped<IUpdateUser, UpdateUser>()
+            .AddScoped<IAddUserToGroup, AddUserToGroup>()
+            .AddScoped<IRemoveUserFromGroup, RemoveUserFromGroup>();
 
         serviceCollection
             .AddScoped<IGetAllGroups, GetAllGroups>()

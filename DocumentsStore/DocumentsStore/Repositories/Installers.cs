@@ -9,6 +9,7 @@ public static class Installers
     {
         return serviceCollection
             .AddScoped<IUsersRepository, UsersRepository>()
-            .AddScoped<IGroupsRepository, GroupsRepository>();
+            .AddScoped<IGroupsRepository, GroupsRepository>()
+            .AddScoped<IGroupUsersRepository, GroupUsersRepository>();
     }
 }
