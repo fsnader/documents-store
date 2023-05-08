@@ -1,10 +1,15 @@
 using DocumentsStore.Domain;
+using DocumentsStore.Repositories.Abstractions;
 using DocumentsStore.UseCases.Users.Abstractions;
 
 namespace DocumentsStore.UseCases.Users;
 
 public class CreateUser : ICreateUser
 {
+    private readonly IUsersRepository _usersRepository;
+
+    public CreateUser(IUsersRepository usersRepository) => _usersRepository = usersRepository;
+
     public async Task<UseCaseResult<User>> ExecuteAsync(User user, CancellationToken cancellationToken)
     {
         if (!IsInputValid(user))
@@ -12,14 +17,9 @@ public class CreateUser : ICreateUser
             return UseCaseResult<User>.BadRequest();
         }
 
-        return UseCaseResult<User>.Success(new User
-        {
-            Id = 0,
-            Name = "Hello",
-            Email = null,
-            Role = Role.Regular,
-            Groups = null
-        });
+        var created = await _usersRepository.CreateAsync(user, cancellationToken);
+        
+        return UseCaseResult<User>.Success(created);
     }
     
     private bool IsInputValid(User user) =>
