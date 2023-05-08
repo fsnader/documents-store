@@ -4,29 +4,29 @@ using DocumentsStore.UseCases.Users.Abstractions;
 
 namespace DocumentsStore.UseCases.Users;
 
-public class GetUserById : IGetUserById
+public class UpdateUser : IUpdateUser
 {
     private readonly IUsersRepository _usersRepository;
 
-    public GetUserById(IUsersRepository usersRepository)
+    public UpdateUser(IUsersRepository usersRepository)
     {
         _usersRepository = usersRepository;
     }
     
-    public async Task<UseCaseResult<User>> ExecuteAsync(int id, CancellationToken cancellationToken)
+    public async Task<UseCaseResult<User>> ExecuteAsync(int id, User user, CancellationToken cancellationToken)
     {
         if (id <= 0)
         {
             return UseCaseResult<User>.BadRequest("Please provide a valid id");
         }
 
-        var user = await _usersRepository.GetByIdAsync(id, cancellationToken);
+        var updated = await _usersRepository.UpdateAsync(id, user, cancellationToken);
 
-        if (user is null)
+        if (updated is null)
         {
             return UseCaseResult<User>.NotFound();
         }
-
-        return UseCaseResult<User>.Success(user);
+        
+        return UseCaseResult<User>.Success(updated);
     }
 }

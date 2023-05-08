@@ -15,6 +15,7 @@
 
     <ItemGroup>
       <Folder Include="Api\Authentication" />
+      <Folder Include="Repositories\Queries" />
       <Folder Include="UseCases\Documents" />
     </ItemGroup>
 

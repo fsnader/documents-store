@@ -9,5 +9,7 @@ public static class UseCasesInstallers
         serviceCollection
             .AddScoped<IGetAllUsers, GetAllUsers>()
             .AddScoped<IGetUserById, GetUserById>()
-            .AddScoped<ICreateUser, CreateUser>();
+            .AddScoped<ICreateUser, CreateUser>()
+            .AddScoped<IDeleteUser, DeleteUser>()
+            .AddScoped<IUpdateUser, UpdateUser>();
 }

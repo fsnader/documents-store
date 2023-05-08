@@ -1,5 +1,4 @@
 using DocumentsStore.Api.DTOs;
-using DocumentsStore.UseCases.Users;
 using DocumentsStore.UseCases.Users.Abstractions;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,9 +24,12 @@ namespace DocumentsStore.Api.Controllers
         
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<UserDto>), 200)]
-        public async Task<ActionResult> Get(CancellationToken cancellationToken)
+        public async Task<ActionResult> Get(
+            CancellationToken cancellationToken,
+            [FromQuery] int take = 100,
+            [FromQuery] int skip = 0)
         {
-            var result = await _getAllUsers.ExecuteAsync(cancellationToken);
+            var result = await _getAllUsers.ExecuteAsync(take, skip, cancellationToken);
 
             return UseCaseActionResult(result, UserDto.CreateFromUsers);
         }

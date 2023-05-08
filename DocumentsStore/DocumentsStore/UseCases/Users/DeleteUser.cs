@@ -4,11 +4,11 @@ using DocumentsStore.UseCases.Users.Abstractions;
 
 namespace DocumentsStore.UseCases.Users;
 
-public class GetUserById : IGetUserById
+public class DeleteUser : IDeleteUser
 {
     private readonly IUsersRepository _usersRepository;
 
-    public GetUserById(IUsersRepository usersRepository)
+    public DeleteUser(IUsersRepository usersRepository)
     {
         _usersRepository = usersRepository;
     }
@@ -19,14 +19,15 @@ public class GetUserById : IGetUserById
         {
             return UseCaseResult<User>.BadRequest("Please provide a valid id");
         }
+        
+        var deleted = await _usersRepository.DeleteAsync(id, cancellationToken);
 
-        var user = await _usersRepository.GetByIdAsync(id, cancellationToken);
-
-        if (user is null)
+        if (deleted is null)
         {
             return UseCaseResult<User>.NotFound();
         }
-
-        return UseCaseResult<User>.Success(user);
+        
+        return UseCaseResult<User>.Success(deleted);
+        
     }
 }
