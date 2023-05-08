@@ -15,9 +15,9 @@
 
     <ItemGroup>
       <Folder Include="Api\Authentication" />
+      <Folder Include="Api\Mappers" />
       <Folder Include="Repositories" />
-      <Folder Include="Usecases\Documents" />
-      <Folder Include="Usecases\Users" />
+      <Folder Include="UseCases\Documents" />
     </ItemGroup>
 
 </Project>

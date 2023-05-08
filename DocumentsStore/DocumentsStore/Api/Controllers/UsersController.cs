@@ -1,43 +1,67 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+using DocumentsStore.Api.DTOs;
+using DocumentsStore.UseCases.Users;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DocumentsStore.Api.Controllers
 {
     [Route("api/users")]
     [ApiController]
-    public class UsersController : ControllerBase
+    public class UsersController : BaseController
     {
-        // GET: api/user
+        private readonly IGetUserById _getUserById;
+        private readonly ICreateUser _createUser;
+        private readonly IGetAllUsers _getAllUsers;
+
+        public UsersController(
+            IGetAllUsers getAllUsers,
+            IGetUserById getUserById,
+            ICreateUser createUser)
+        {
+            _getAllUsers = getAllUsers;
+            _getUserById = getUserById;
+            _createUser = createUser;
+        }
+        
         [HttpGet]
-        public IEnumerable<string> Get()
+        [ProducesResponseType(typeof(IEnumerable<UserDto>), 200)]
+        public async Task<ActionResult> Get(CancellationToken cancellationToken)
         {
-            return new string[] { "value1", "value2" };
+            var result = await _getAllUsers.ExecuteAsync(cancellationToken);
+
+            return UseCaseActionResult(result, UserDto.CreateFromUsers);
         }
 
-        // GET: api/user/5
         [HttpGet("{id}", Name = "Get")]
-        public string Get(int id)
+        [ProducesResponseType(typeof(UserDto), 200)]
+        public async Task<ActionResult> Get(int id, CancellationToken cancellationToken)
         {
-            return "value";
+            var result = await _getUserById.ExecuteAsync(id, cancellationToken);
+
+            return UseCaseActionResult(result, UserDto.CreateFromUser);
         }
 
-        // POST: api/User
         [HttpPost]
-        public void Post([FromBody] string value)
+        [ProducesResponseType(typeof(UserDto), 200)]
+        public async Task<ActionResult> Post([FromBody] UserDto user, CancellationToken cancellationToken)
         {
+            var result = await _createUser.ExecuteAsync(
+                user.ConvertToUser(), 
+                cancellationToken);
+
+            return UseCaseActionResult(result, UserDto.CreateFromUser);
         }
 
-        // PUT: api/User/5
+        [HttpPost("{id}/add-to-group/{groupId}", Name = "AddUserToGroup")]
+        public async Task<ActionResult> AddToGroup(int id, int groupId, CancellationToken cancellationToken)
+        {
+            return Ok();
+        }
+
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public void Put(int id, [FromBody] UserDto user)
         {
         }
 
-        // DELETE: api/User/5
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
