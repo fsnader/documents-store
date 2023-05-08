@@ -40,9 +40,9 @@ namespace DocumentsStore.Api.Controllers
             return UseCaseActionResult(result, GroupDto.CreateFromGroups);
         }
 
-        [HttpGet("{id}", Name = "Get")]
+        [HttpGet("{id}", Name = nameof(GetGroupById))]
         [ProducesResponseType(typeof(GroupDto), 200)]
-        public async Task<IActionResult> Get(int id, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetGroupById(int id, CancellationToken cancellationToken)
         {
             var result = await _getGroupById.ExecuteAsync(id, cancellationToken);
 

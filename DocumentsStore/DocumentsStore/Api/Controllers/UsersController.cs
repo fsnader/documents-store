@@ -40,9 +40,9 @@ namespace DocumentsStore.Api.Controllers
             return UseCaseActionResult(result, UserDto.CreateFromUsers);
         }
 
-        [HttpGet("{id}", Name = "Get")]
+        [HttpGet("{id}", Name = nameof(GetUserById))]
         [ProducesResponseType(typeof(UserDto), 200)]
-        public async Task<IActionResult> Get(int id, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetUserById(int id, CancellationToken cancellationToken)
         {
             var result = await _getUserById.ExecuteAsync(id, cancellationToken);
 
