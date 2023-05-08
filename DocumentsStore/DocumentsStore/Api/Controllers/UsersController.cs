@@ -1,5 +1,6 @@
 using DocumentsStore.Api.DTOs;
 using DocumentsStore.UseCases.Users;
+using DocumentsStore.UseCases.Users.Abstractions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DocumentsStore.Api.Controllers

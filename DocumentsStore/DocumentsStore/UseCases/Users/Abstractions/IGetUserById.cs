@@ -1,6 +1,6 @@
 using DocumentsStore.Domain;
 
-namespace DocumentsStore.UseCases.Users;
+namespace DocumentsStore.UseCases.Users.Abstractions;
 
 public interface IGetUserById
 {

@@ -1,8 +1,10 @@
 using System.Text.Json.Serialization;
+using DocumentsStore.UseCases.Users;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddUseCases();
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>

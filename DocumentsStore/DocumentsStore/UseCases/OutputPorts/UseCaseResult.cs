@@ -25,7 +25,7 @@ public class UseCaseResult<T>
     public static UseCaseResult<T> NotFound(string errorMessage = "Entity not found") =>
         new UseCaseResult<T>(ErrorType.NotFound, errorMessage);
     
-    public static UseCaseResult<T> BadRequest(string errorMessage = "Please provide the correct parameters") =>
+    public static UseCaseResult<T> BadRequest(string errorMessage = "Please provide all required fields") =>
         new UseCaseResult<T>(ErrorType.BadRequest, errorMessage);
 
     public static UseCaseResult<T> Unauthorized(string errorMessage = "Unauthorized") =>
