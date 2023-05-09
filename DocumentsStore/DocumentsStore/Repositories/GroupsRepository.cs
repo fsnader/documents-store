@@ -17,41 +17,49 @@ public class GroupsRepository : IGroupsRepository
 
     public async Task<Group?> CreateAsync(Group group, CancellationToken cancellationToken)
     {
-        const string query = GroupsQueries.Create;
         using var connection = _dbConnectionFactory.GenerateConnection();
-        var result = await connection.QueryFirstOrDefaultAsync<Group>(query, group);
+        var result = await connection.QueryFirstOrDefaultAsync<Group>(GroupsQueries.Create, group);
         return result;
     }
 
     public async Task<Group?> DeleteAsync(int id, CancellationToken cancellationToken)
     {
-        const string query = GroupsQueries.Delete;
         using var connection = _dbConnectionFactory.GenerateConnection();
-        var result = await connection.QueryFirstOrDefaultAsync<Group>(query, new { Id = id });
+        var parameters = new { Id = id };
+        var result = await connection.QueryFirstOrDefaultAsync<Group>(GroupsQueries.Delete, parameters);
         return result;
     }
 
     public async Task<IEnumerable<Group>> ListAllAsync(int take, int skip, CancellationToken cancellationToken)
     {
-        const string query = GroupsQueries.ListAll;
         using var connection = _dbConnectionFactory.GenerateConnection();
-        var result = await connection.QueryAsync<Group>(query, new { Take = take, Skip = skip });
+
+        var parameters = new
+        {
+            Take = take,
+            Skip = skip
+        };
+
+        var result = await connection.QueryAsync<Group>(GroupsQueries.ListAll, parameters);
         return result;
     }
 
     public async Task<Group?> GetByIdAsync(int id, CancellationToken cancellationToken)
     {
-        const string query = GroupsQueries.GetById;
         using var connection = _dbConnectionFactory.GenerateConnection();
-        var result = await connection.QueryFirstOrDefaultAsync<Group>(query, new { Id = id });
+        var result = await connection.QueryFirstOrDefaultAsync<Group>(
+            GroupsQueries.GetById, 
+            new { Id = id });
+        
         return result;
     }
 
     public async Task<Group?> UpdateAsync(int id, Group group, CancellationToken cancellationToken)
     {
-        const string query = GroupsQueries.Update;
         using var connection = _dbConnectionFactory.GenerateConnection();
-        var result = await connection.QueryFirstOrDefaultAsync<Group>(query, new { Id = id, Name = group.Name });
+        var parameters = new { Id = id, Name = group.Name };
+        var result = await connection.QueryFirstOrDefaultAsync<Group>(GroupsQueries.Update, parameters);
+        
         return result;
     }
 }

@@ -3,32 +3,32 @@ namespace DocumentsStore.Repositories.Queries;
 public static class GroupsQueries
 {
     public const string Create = @"
-        INSERT INTO ""Groups"" (""Name"")
+        INSERT INTO ""Group"" (""Name"")
         VALUES (@Name)
         RETURNING *
     ";
 
     public const string Delete = @"
-        DELETE FROM ""Groups""
+        DELETE FROM ""Group""
         WHERE ""Id"" = @Id
         RETURNING *
     ";
 
     public const string ListAll = @"
         SELECT *
-        FROM ""Groups""
-        ORDER BY ""Name""
+        FROM ""Group""
+        ORDER BY ""Id""
         LIMIT @Take OFFSET @Skip
     ";
 
     public const string GetById = @"
         SELECT *
-        FROM ""Groups""
+        FROM ""Group""
         WHERE ""Id"" = @Id
     ";
 
     public const string Update = @"
-        UPDATE ""Groups""
+        UPDATE ""Group""
         SET ""Name"" = @Name
         WHERE ""Id"" = @Id
         RETURNING *

@@ -10,53 +10,72 @@ namespace DocumentsStore.Repositories;
 public class UsersRepository : IUsersRepository
 {
     private readonly IDbConnectionFactory _connectionFactory;
+
     public UsersRepository(IDbConnectionFactory connectionFactory)
     {
         _connectionFactory = connectionFactory;
     }
-    
+
     public async Task<User?> GetByIdAsync(int id, CancellationToken cancellationToken)
     {
-        using IDbConnection db = _connectionFactory.GenerateConnection();
+        using var db = _connectionFactory.GenerateConnection();
         var user = await db.QueryFirstOrDefaultAsync<User>(
-            UserQueries.GetUserById,
+            UserQueries.GetById,
             new { Id = id });
+        
         return user;
     }
 
     public async Task<User> CreateAsync(User user, CancellationToken cancellationToken)
     {
-        using IDbConnection db = _connectionFactory.GenerateConnection();
-        
-        var parameters = new { 
+        using var db = _connectionFactory.GenerateConnection();
+
+        var parameters = new
+        {
             user.Name,
             user.Email,
-            Role = user.Role.ToString() 
+            Role = user.Role.ToString()
         };
-        var id = await db.ExecuteScalarAsync<int>(UserQueries.CreateUser, parameters);
 
-        user.Id = id;
-        return user;
+        var result = await db.ExecuteScalarAsync<User>(UserQueries.Create, parameters);
+
+        return result;
     }
 
     public async Task<User?> UpdateAsync(int id, User user, CancellationToken cancellationToken)
     {
-        using IDbConnection db = _connectionFactory.GenerateConnection();
-        var parameters = new { user.Name, user.Email, user.Role, Id = id };
-        return await db.QueryFirstOrDefaultAsync<User>(UserQueries.UpdateUser, parameters);
+        using var db = _connectionFactory.GenerateConnection();
+
+        var parameters = new
+        {
+            user.Name,
+            user.Email,
+            Role = user.Role.ToString(),
+            Id = id
+        };
+
+        return await db.QueryFirstOrDefaultAsync<User>(UserQueries.Update, parameters);
     }
 
     public async Task<User?> DeleteAsync(int id, CancellationToken cancellationToken)
     {
-        using IDbConnection db = _connectionFactory.GenerateConnection();
+        using var db = _connectionFactory.GenerateConnection();
+
         var parameters = new { Id = id };
-        return await db.QueryFirstOrDefaultAsync<User>(UserQueries.DeleteUser, parameters);
+
+        return await db.QueryFirstOrDefaultAsync<User>(UserQueries.Delete, parameters);
     }
 
     public async Task<IEnumerable<User>> ListAllAsync(int take, int skip, CancellationToken cancellationToken)
     {
-        using IDbConnection db = _connectionFactory.GenerateConnection();
-        var parameters = new { Take = take, Skip = skip };
-        return await db.QueryAsync<User>(UserQueries.ListAllUsers, parameters);
+        using var db = _connectionFactory.GenerateConnection();
+        
+        var parameters = new
+        {
+            Take = take,
+            Skip = skip
+        };
+        
+        return await db.QueryAsync<User>(UserQueries.ListAll, parameters);
     }
 }
