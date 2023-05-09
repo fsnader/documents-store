@@ -14,20 +14,27 @@ namespace DocumentsStore.Api.Controllers
         private readonly IUpdateUser _updateUser;
         private readonly IDeleteUser _deleteUser;
 
+        private readonly IAddUserToGroup _addUserToGroup;
+        private readonly IRemoveUserFromGroup _removeUserFromGroup;
+
         public UsersController(
             IGetAllUsers getAllUsers,
             IGetUserById getUserById,
-            ICreateUser createUser, 
-            IUpdateUser updateUser, 
-            IDeleteUser deleteUser)
+            ICreateUser createUser,
+            IUpdateUser updateUser,
+            IDeleteUser deleteUser,
+            IAddUserToGroup addUserToGroup,
+            IRemoveUserFromGroup removeUserFromGroup)
         {
             _getAllUsers = getAllUsers;
             _getUserById = getUserById;
             _createUser = createUser;
             _updateUser = updateUser;
             _deleteUser = deleteUser;
+            _addUserToGroup = addUserToGroup;
+            _removeUserFromGroup = removeUserFromGroup;
         }
-        
+
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<UserDto>), 200)]
         public async Task<IActionResult> Get(
@@ -54,7 +61,7 @@ namespace DocumentsStore.Api.Controllers
         public async Task<IActionResult> Post([FromBody] UserDto user, CancellationToken cancellationToken)
         {
             var result = await _createUser.ExecuteAsync(
-                user.ConvertToUser(), 
+                user.ConvertToUser(),
                 cancellationToken);
 
             return UseCaseActionResult(result, UserDto.CreateFromUser);
@@ -77,6 +84,30 @@ namespace DocumentsStore.Api.Controllers
         public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
         {
             var result = await _deleteUser.ExecuteAsync(id, cancellationToken);
+
+            return UseCaseActionResult(result, UserDto.CreateFromUser);
+        }
+        
+        [HttpPost("{userId}/add-to-group/{groupId}")]
+        [ProducesResponseType(typeof(UserDto), 200)]
+        public async Task<IActionResult> AddUserToGroup(int userId, int groupId, CancellationToken cancellationToken)
+        {
+            var result = await _addUserToGroup.ExecuteAsync(
+                userId,
+                groupId,
+                cancellationToken);
+
+            return UseCaseActionResult(result, UserDto.CreateFromUser);
+        }
+        
+        [HttpPost("{userId}/remove-from-group/{groupId}")]
+        [ProducesResponseType(typeof(UserDto), 200)]
+        public async Task<IActionResult> RemoveUserFromGroup(int userId, int groupId, CancellationToken cancellationToken)
+        {
+            var result = await _removeUserFromGroup.ExecuteAsync(
+                userId,
+                groupId,
+                cancellationToken);
 
             return UseCaseActionResult(result, UserDto.CreateFromUser);
         }
