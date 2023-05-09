@@ -1,32 +1,57 @@
+using Dapper;
 using DocumentsStore.Domain;
 using DocumentsStore.Repositories.Abstractions;
+using DocumentsStore.Repositories.Database;
+using DocumentsStore.Repositories.Queries;
 
 namespace DocumentsStore.Repositories;
 
 public class GroupsRepository : IGroupsRepository
 {
-    public Task<Group?> CreateAsync(Group group, CancellationToken cancellationToken)
+    private readonly IDbConnectionFactory _dbConnectionFactory;
+
+    public GroupsRepository(IDbConnectionFactory dbConnectionFactory)
     {
-        throw new NotImplementedException();
+        _dbConnectionFactory = dbConnectionFactory;
     }
 
-    public Task<Group?> DeleteAsync(int id, CancellationToken cancellationToken)
+    public async Task<Group?> CreateAsync(Group group, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        const string query = GroupsQueries.Create;
+        using var connection = _dbConnectionFactory.GenerateConnection();
+        var result = await connection.QueryFirstOrDefaultAsync<Group>(query, group);
+        return result;
     }
 
-    public Task<IEnumerable<Group>> ListAllAsync(int take, int skip, CancellationToken cancellationToken)
+    public async Task<Group?> DeleteAsync(int id, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        const string query = GroupsQueries.Delete;
+        using var connection = _dbConnectionFactory.GenerateConnection();
+        var result = await connection.QueryFirstOrDefaultAsync<Group>(query, new { Id = id });
+        return result;
     }
 
-    public Task<Group?> GetByIdAsync(int id, CancellationToken cancellationToken)
+    public async Task<IEnumerable<Group>> ListAllAsync(int take, int skip, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        const string query = GroupsQueries.ListAll;
+        using var connection = _dbConnectionFactory.GenerateConnection();
+        var result = await connection.QueryAsync<Group>(query, new { Take = take, Skip = skip });
+        return result;
     }
 
-    public Task<Group?> UpdateAsync(int id, Group group, CancellationToken cancellationToken)
+    public async Task<Group?> GetByIdAsync(int id, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        const string query = GroupsQueries.GetById;
+        using var connection = _dbConnectionFactory.GenerateConnection();
+        var result = await connection.QueryFirstOrDefaultAsync<Group>(query, new { Id = id });
+        return result;
+    }
+
+    public async Task<Group?> UpdateAsync(int id, Group group, CancellationToken cancellationToken)
+    {
+        const string query = GroupsQueries.Update;
+        using var connection = _dbConnectionFactory.GenerateConnection();
+        var result = await connection.QueryFirstOrDefaultAsync<Group>(query, new { Id = id, Name = group.Name });
+        return result;
     }
 }

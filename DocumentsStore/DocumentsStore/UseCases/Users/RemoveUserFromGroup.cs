@@ -15,7 +15,7 @@ public class RemoveUserFromGroup : IRemoveUserFromGroup
     
     public async Task<UseCaseResult<User>> ExecuteAsync(int userId, int groupId, CancellationToken cancellationToken)
     {
-        var result = await _groupUsersRepository.RemoveUserToGroup(userId, groupId, cancellationToken);
+        var result = await _groupUsersRepository.RemoveUserFromGroup(userId, groupId, cancellationToken);
 
         return UseCaseResult<User>.Success(result);
     }

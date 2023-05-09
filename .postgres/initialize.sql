@@ -3,7 +3,7 @@ CREATE TYPE "UserRole" AS ENUM ('Regular', 'Manager', 'Admin');
 CREATE TABLE IF NOT EXISTS "User" (
   "Id" SERIAL PRIMARY KEY,
   "Name" TEXT NOT NULL,
-  "Email" TEXT NOT NULL,
+  "Email" TEXT NOT NULL UNIQUE,
   "Role" "UserRole" NOT NULL
 );
 

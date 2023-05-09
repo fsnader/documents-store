@@ -1,57 +1,66 @@
+using System.Data;
+using Dapper;
 using DocumentsStore.Domain;
 using DocumentsStore.Repositories.Abstractions;
+using DocumentsStore.Repositories.Database;
+using DocumentsStore.Repositories.Queries;
+using Npgsql;
 
 namespace DocumentsStore.Repositories;
 
 public class UsersRepository : IUsersRepository
 {
+    private readonly IDbConnectionFactory _connectionFactory;
+    public UsersRepository(IDbConnectionFactory connectionFactory)
+    {
+        _connectionFactory = connectionFactory;
+    }
+    
     public async Task<User?> GetByIdAsync(int id, CancellationToken cancellationToken)
     {
-        return new()
-        {
-            Id = 0,
-            Name = "aaa",
-            Email = "",
-            Role = Role.Regular,
-            Groups = null
-        };
+        using IDbConnection db = _connectionFactory.GenerateConnection();
+        var user = await db.QueryFirstOrDefaultAsync<User>(
+            UserQueries.GetUserById,
+            new { Id = id });
+        return user;
     }
 
     public async Task<User> CreateAsync(User user, CancellationToken cancellationToken)
     {
+        using IDbConnection db = _connectionFactory.GenerateConnection();
+        
+        var parameters = new { 
+            user.Name,
+            user.Email,
+            Role = user.Role.ToString() 
+        };
+        var id = await db.ExecuteScalarAsync<int>(UserQueries.CreateUser, parameters);
+
+        user.Id = id;
         return user;
     }
 
-    public async Task<User> UpdateAsync(int id, User user, CancellationToken cancellationToken)
+    public async Task<User?> UpdateAsync(int id, User user, CancellationToken cancellationToken)
     {
-        return user;
+        using IDbConnection db = _connectionFactory.GenerateConnection();
+        var sql = "UPDATE \"User\" SET \"Name\" = @Name, \"Email\" = @Email, \"Role\" = @Role WHERE \"Id\" = @Id RETURNING *";
+        var parameters = new { user.Name, user.Email, user.Role, Id = id };
+        return await db.QueryFirstOrDefaultAsync<User>(sql, parameters);
     }
 
-    public async Task<User> DeleteAsync(int id, CancellationToken cancellationToken)
+    public async Task<User?> DeleteAsync(int id, CancellationToken cancellationToken)
     {
-        return new()
-        {
-            Id = 0,
-            Name = "aaa",
-            Email = "",
-            Role = Role.Regular,
-            Groups = null
-        };
+        using IDbConnection db = _connectionFactory.GenerateConnection();
+        var sql = "DELETE FROM \"User\" WHERE \"Id\" = @Id RETURNING *";
+        var parameters = new { Id = id };
+        return await db.QueryFirstOrDefaultAsync<User>(sql, parameters);
     }
 
-    public async Task<IEnumerable<User>> ListAllAsync(
-        int take, 
-        int skip, 
-        CancellationToken cancellationToken) =>
-        new List<User>
-        {
-            new()
-            {
-                Id = 0,
-                Name = "aaa",
-                Email = "",
-                Role = Role.Regular,
-                Groups = null
-            }
-        };
+    public async Task<IEnumerable<User>> ListAllAsync(int take, int skip, CancellationToken cancellationToken)
+    {
+        using IDbConnection db = _connectionFactory.GenerateConnection();
+        var sql = "SELECT * FROM \"User\" ORDER BY \"Id\" OFFSET @Skip ROWS FETCH NEXT @Take ROWS ONLY";
+        var parameters = new { Take = take, Skip = skip };
+        return await db.QueryAsync<User>(sql, parameters);
+    }
 }
