@@ -4,7 +4,6 @@ using DocumentsStore.Domain;
 using DocumentsStore.Repositories.Abstractions;
 using DocumentsStore.Repositories.Database;
 using DocumentsStore.Repositories.Queries;
-using Npgsql;
 
 namespace DocumentsStore.Repositories;
 
@@ -43,24 +42,21 @@ public class UsersRepository : IUsersRepository
     public async Task<User?> UpdateAsync(int id, User user, CancellationToken cancellationToken)
     {
         using IDbConnection db = _connectionFactory.GenerateConnection();
-        var sql = "UPDATE \"User\" SET \"Name\" = @Name, \"Email\" = @Email, \"Role\" = @Role WHERE \"Id\" = @Id RETURNING *";
         var parameters = new { user.Name, user.Email, user.Role, Id = id };
-        return await db.QueryFirstOrDefaultAsync<User>(sql, parameters);
+        return await db.QueryFirstOrDefaultAsync<User>(UserQueries.UpdateUser, parameters);
     }
 
     public async Task<User?> DeleteAsync(int id, CancellationToken cancellationToken)
     {
         using IDbConnection db = _connectionFactory.GenerateConnection();
-        var sql = "DELETE FROM \"User\" WHERE \"Id\" = @Id RETURNING *";
         var parameters = new { Id = id };
-        return await db.QueryFirstOrDefaultAsync<User>(sql, parameters);
+        return await db.QueryFirstOrDefaultAsync<User>(UserQueries.DeleteUser, parameters);
     }
 
     public async Task<IEnumerable<User>> ListAllAsync(int take, int skip, CancellationToken cancellationToken)
     {
         using IDbConnection db = _connectionFactory.GenerateConnection();
-        var sql = "SELECT * FROM \"User\" ORDER BY \"Id\" OFFSET @Skip ROWS FETCH NEXT @Take ROWS ONLY";
         var parameters = new { Take = take, Skip = skip };
-        return await db.QueryAsync<User>(sql, parameters);
+        return await db.QueryAsync<User>(UserQueries.ListAllUsers, parameters);
     }
 }
