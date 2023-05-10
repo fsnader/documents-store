@@ -2,7 +2,7 @@ namespace DocumentsStore.Repositories.Queries;
 
 public static class UserQueries
 {
-    public static string Create = @"
+    public const string Create = @"
         INSERT INTO ""User"" 
             (
              ""Name"",
@@ -18,20 +18,20 @@ public static class UserQueries
         RETURNING *
     ";
     
-    public static string GetById = @"
+    public const string GetById = @"
         SELECT *
         FROM ""User""
         WHERE ""Id"" = @Id
     ";
     
-    public static string ListAll = @"
+    public const string ListAll = @"
         SELECT *
         FROM ""User""
         ORDER BY ""Id""
         LIMIT @Take OFFSET @Skip
     ";
     
-    public static string Update = @"
+    public const string Update = @"
         UPDATE ""User""
         SET 
             ""Name"" = @Name,
@@ -41,7 +41,7 @@ public static class UserQueries
         RETURNING *
     ";
     
-    public static string Delete = @"
+    public const string Delete = @"
         DELETE FROM ""User""
         WHERE ""Id"" = @Id
         RETURNING *";
