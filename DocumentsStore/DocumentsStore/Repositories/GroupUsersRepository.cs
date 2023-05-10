@@ -15,7 +15,7 @@ public class GroupUsersRepository : IGroupUsersRepository
         _connectionFactory = connectionFactory;
     }
 
-    public async Task<User?> AddUserToGroup(int userId, int groupId, CancellationToken cancellationToken)
+    public async Task<IEnumerable<Group>> AddUserToGroup(int userId, int groupId, CancellationToken cancellationToken)
     {
         using var db = _connectionFactory.GenerateConnection();
 
@@ -23,10 +23,10 @@ public class GroupUsersRepository : IGroupUsersRepository
 
         await db.ExecuteAsync(GroupUsersQueries.AddUserToGroup, parameters);
 
-        return await db.QueryFirstOrDefaultAsync<User>(UserQueries.GetById, new { Id = userId });;
+        return await GetGroupsByUserIdAsync(userId, cancellationToken);
     }
 
-    public async Task<User> RemoveUserFromGroup(int userId, int groupId, CancellationToken cancellationToken)
+    public async Task<IEnumerable<Group>> RemoveUserFromGroup(int userId, int groupId, CancellationToken cancellationToken)
     {
         using var db = _connectionFactory.GenerateConnection();
         
@@ -34,7 +34,7 @@ public class GroupUsersRepository : IGroupUsersRepository
 
         await db.ExecuteAsync(GroupUsersQueries.RemoveUserFromGroup, parameters);
 
-        return await db.QuerySingleAsync<User>(UserQueries.GetById, new { Id = userId });
+        return await GetGroupsByUserIdAsync(userId, cancellationToken);
     }
     
     public async Task<IEnumerable<Group>> GetGroupsByUserIdAsync(int userId, CancellationToken cancellationToken)

@@ -19,12 +19,13 @@ public class AddUserToGroup : IAddUserToGroup
     
     public async Task<UseCaseResult<User>> ExecuteAsync(int userId, int groupId, CancellationToken cancellationToken)
     {
-        var user = _usersRepository.GetByIdAsync(userId, cancellationToken);
+        var userTask = _usersRepository.GetByIdAsync(userId, cancellationToken);
         var group = _groupsRepository.GetByIdAsync(groupId, cancellationToken);
 
-        await Task.WhenAll(user, group);
+        await Task.WhenAll(userTask, group);
+        var user = await userTask;
         
-        if (await user is null)
+        if (user is null)
         {
             return UseCaseResult<User>.NotFound("User not found");
         }
@@ -34,8 +35,8 @@ public class AddUserToGroup : IAddUserToGroup
             return UseCaseResult<User>.NotFound("Group not found");
         }
         
-        await _groupUsersRepository.AddUserToGroup(userId, groupId, cancellationToken);
+        user.Groups = await _groupUsersRepository.AddUserToGroup(userId, groupId, cancellationToken);
 
-        return UseCaseResult<User>.Success((await user)!);
+        return UseCaseResult<User>.Success(user);
     }
 }
