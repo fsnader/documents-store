@@ -12,12 +12,6 @@ public static class GroupUsersQueries
         WHERE ""UserId"" = @UserId AND ""GroupId"" = @GroupId;
     ";
 
-    public static string GetUserById = @"
-        SELECT *
-        FROM ""User""
-        WHERE ""Id"" = @Id;
-    ";
-
     public static string GetGroupsByUserId = @"
             SELECT g.*
             FROM ""Group"" g
