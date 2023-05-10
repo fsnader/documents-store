@@ -16,6 +16,7 @@ namespace DocumentsStore.Api.Controllers
 
         private readonly IAddUserToGroup _addUserToGroup;
         private readonly IRemoveUserFromGroup _removeUserFromGroup;
+        private IGetUserGroups _getUserGroups;
 
         public UsersController(
             IGetAllUsers getAllUsers,
@@ -24,7 +25,8 @@ namespace DocumentsStore.Api.Controllers
             IUpdateUser updateUser,
             IDeleteUser deleteUser,
             IAddUserToGroup addUserToGroup,
-            IRemoveUserFromGroup removeUserFromGroup)
+            IRemoveUserFromGroup removeUserFromGroup,
+            IGetUserGroups getUserGroups)
         {
             _getAllUsers = getAllUsers;
             _getUserById = getUserById;
@@ -33,6 +35,7 @@ namespace DocumentsStore.Api.Controllers
             _deleteUser = deleteUser;
             _addUserToGroup = addUserToGroup;
             _removeUserFromGroup = removeUserFromGroup;
+            _getUserGroups = getUserGroups;
         }
 
         [HttpGet]
@@ -87,8 +90,17 @@ namespace DocumentsStore.Api.Controllers
 
             return UseCaseActionResult(result, UserDto.CreateFromUser);
         }
+
+        [HttpGet("{id}/groups")]
+        [ProducesResponseType(typeof(IEnumerable<GroupDto>), 200)]
+        public async Task<IActionResult> GetUserGroups(int id, CancellationToken cancellationToken)
+        {
+            var result = await _getUserGroups.ExecuteAsync(id, cancellationToken);
+            
+            return UseCaseActionResult(result, GroupDto.CreateFromGroups);
+        }
         
-        [HttpPost("{userId}/add-to-group/{groupId}")]
+        [HttpPost("{userId}/groups/{groupId}")]
         [ProducesResponseType(typeof(UserDto), 200)]
         public async Task<IActionResult> AddUserToGroup(int userId, int groupId, CancellationToken cancellationToken)
         {
@@ -100,7 +112,7 @@ namespace DocumentsStore.Api.Controllers
             return UseCaseActionResult(result, UserDto.CreateFromUser);
         }
         
-        [HttpPost("{userId}/remove-from-group/{groupId}")]
+        [HttpDelete("{userId}/groups/{groupId}")]
         [ProducesResponseType(typeof(UserDto), 200)]
         public async Task<IActionResult> RemoveUserFromGroup(int userId, int groupId, CancellationToken cancellationToken)
         {

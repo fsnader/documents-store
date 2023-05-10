@@ -17,3 +17,4 @@ public class GetAllUsers : IGetAllUsers
         return UseCaseResult<IEnumerable<User>>.Success(results);
     }
 }
+

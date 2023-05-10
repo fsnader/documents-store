@@ -18,10 +18,8 @@ public class UsersRepository : IUsersRepository
     public async Task<User?> GetByIdAsync(int id, CancellationToken cancellationToken)
     {
         using var db = _connectionFactory.GenerateConnection();
-        var user = await db.QueryFirstOrDefaultAsync<User>(
-            UserQueries.GetById,
-            new { Id = id });
-        
+        var user = await db.QueryFirstOrDefaultAsync<User>(UserQueries.GetById, new { Id = id });
+
         return user;
     }
 
@@ -36,7 +34,7 @@ public class UsersRepository : IUsersRepository
             Role = user.Role.ToString()
         };
 
-        var result = await db.ExecuteScalarAsync<User>(UserQueries.Create, parameters);
+        var result = await db.QueryFirstOrDefaultAsync<User>(UserQueries.Create, parameters);
 
         return result;
     }
@@ -68,13 +66,13 @@ public class UsersRepository : IUsersRepository
     public async Task<IEnumerable<User>> ListAllAsync(int take, int skip, CancellationToken cancellationToken)
     {
         using var db = _connectionFactory.GenerateConnection();
-        
+
         var parameters = new
         {
             Take = take,
             Skip = skip
         };
-        
+
         return await db.QueryAsync<User>(UserQueries.ListAll, parameters);
     }
 }
