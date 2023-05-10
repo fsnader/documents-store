@@ -20,4 +20,8 @@
       <Folder Include="UseCases\Documents" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Content Include=".postgres\initialize.sql" />
+    </ItemGroup>
+
 </Project>
