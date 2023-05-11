@@ -55,9 +55,9 @@ public class DocumentsRepository : IDocumentsRepository
         using var connection = _dbConnectionFactory.GenerateConnection();
 
         var query = DocumentQueries.CheckUserDocumentPermission;
-        var result = await connection.QueryFirstOrDefaultAsync<int>(query, new { Id = id, UserId = userId });
+        var result = await connection.QueryFirstOrDefaultAsync<bool>(query, new { Id = id, UserId = userId });
 
-        return result > 0;
+        return result;
     }
 
     public async Task<IEnumerable<Document>> ListUserAuthorizedDocuments(int userId, int take, int skip, CancellationToken cancellationToken)

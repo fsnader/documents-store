@@ -2,11 +2,6 @@ namespace DocumentsStore.Repositories.Queries;
 
 public static class DocumentQueries
 {
-    public const string CreateDocument = @"
-        INSERT INTO ""Document"" (""UserId"", ""PostedDate"", ""Name"", ""Description"", ""Category"", ""Content"")
-        VALUES (@UserId, @PostedDate, @Name, @Description, @CategoryString::""DocumentCategory"", @Content)
-        RETURNING ""Id"";";
-
     public const string InsertAuthorizedUser = @"
         INSERT INTO ""DocumentUserPermission"" (""DocumentId"", ""UserId"")
         VALUES (@DocumentId, @UserId);";
@@ -16,14 +11,31 @@ public static class DocumentQueries
         VALUES (@DocumentId, @GroupId);";
 
     public const string GetDocumentById = @"
-        SELECT ""Id"", ""UserId"", ""PostedDate"", ""Name"", ""Description"", ""Category"", ""Content""
+        SELECT *
         FROM ""Document""
-        WHERE ""Id"" = @Id;";
+        WHERE ""Id"" = @Id;
+    ";
 
     public const string CheckUserDocumentPermission = @"
-        SELECT COUNT(*) 
-        FROM ""DocumentPermission""
-        WHERE ""DocumentId"" = @Id;";
+        SELECT EXISTS (
+            SELECT 1 FROM ""Document""
+            WHERE ""Id"" = @documentId
+            AND (
+                ""UserId"" = @userId
+                OR EXISTS (
+                    SELECT 1 FROM ""DocumentUserPermission""
+                    WHERE ""DocumentId"" = @documentId
+                    AND ""UserId"" = @userId
+                )
+                OR EXISTS (
+                    SELECT 1 FROM ""DocumentGroupPermission""
+                    INNER JOIN ""UserGroup"" ON ""UserGroup"".""GroupId"" = ""DocumentGroupPermission"".""GroupId""
+                    WHERE ""DocumentGroupPermission"".""DocumentId"" = @documentId
+                    AND ""UserGroup"".""UserId"" = @userId
+                )
+            )
+        );
+";
 
     public static readonly string ListUserAuthorizedDocuments = @"
     SELECT DISTINCT d.*
