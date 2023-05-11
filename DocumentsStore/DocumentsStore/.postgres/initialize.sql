@@ -49,3 +49,36 @@ CREATE TABLE "DocumentGroupPermission" (
     FOREIGN KEY ("GroupId") REFERENCES "Group" ("Id"),
     FOREIGN KEY ("DocumentId") REFERENCES "Document" ("Id")
 );
+
+CREATE OR REPLACE PROCEDURE "CreateDocument"(
+    user_id INT,
+    name TEXT,
+    description TEXT,
+    category TEXT,
+    content TEXT,
+    posted_date TIMESTAMP WITH TIME ZONE,
+    authorized_users INT[],
+    authorized_groups INT[],
+    OUT document_id INT
+)
+language plpgsql
+as $$
+DECLARE
+    id INTEGER;
+BEGIN
+INSERT INTO "Document" ("UserId", "Name", "Description", "Category", "Content", "PostedDate")
+VALUES (user_id, name, description, category::"DocumentCategory", content, posted_date)
+    RETURNING "Id" INTO document_id;
+
+FOREACH id IN ARRAY authorized_users
+        LOOP
+            INSERT INTO "DocumentUserPermission" ("DocumentId", "UserId")
+            VALUES (document_id, user_id);
+END LOOP;
+
+    FOREACH id IN ARRAY authorized_groups
+        LOOP
+            INSERT INTO "DocumentGroupPermission" ("DocumentId", "GroupId")
+            VALUES (document_id, id);
+END LOOP;
+END; $$

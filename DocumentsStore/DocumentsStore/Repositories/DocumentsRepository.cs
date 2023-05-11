@@ -1,3 +1,4 @@
+using System.Data;
 using Dapper;
 using DocumentsStore.Domain;
 using DocumentsStore.Repositories.Abstractions;
@@ -22,42 +23,23 @@ public class DocumentsRepository : IDocumentsRepository
         CancellationToken cancellationToken)
     {
         using var connection = _dbConnectionFactory.GenerateConnection();
-        connection.Open();
+        
+        var parameters = new DynamicParameters();
+        parameters.Add("user_id", document.UserId);
+        parameters.Add("name", document.Name);
+        parameters.Add("description", document.Description);
+        parameters.Add("category", document.CategoryString);
+        parameters.Add("content", document.Content);
+        parameters.Add("posted_date", document.PostedDate);
+        parameters.Add("authorized_users", authorizedUsers);
+        parameters.Add("authorized_groups", authorizedGroups);
+        parameters.Add("document_id", direction: ParameterDirection.InputOutput);
 
-        // Begin transaction
-        using var transaction = connection.BeginTransaction();
+        await connection.ExecuteAsync("\"CreateDocument\"", parameters, commandType: CommandType.StoredProcedure);
+        
+        document.Id = parameters.Get<int>("document_id");
 
-        try
-        {
-            // Insert the document
-            var insertQuery = DocumentQueries.CreateDocument;
-            var documentId = await connection.ExecuteScalarAsync<int>(insertQuery, document, transaction);
-
-            // Insert the authorized users
-            var insertAuthorizedUserQuery = DocumentQueries.InsertAuthorizedUser;
-            foreach (var userId in authorizedUsers)
-            {
-                await connection.ExecuteAsync(insertAuthorizedUserQuery, new { DocumentId = documentId, UserId = userId }, transaction);
-            }
-
-            // Insert the authorized groups
-            var insertAuthorizedGroupQuery = DocumentQueries.InsertAuthorizedGroup;
-            foreach (var groupId in authorizedGroups)
-            {
-                await connection.ExecuteAsync(insertAuthorizedGroupQuery, new { DocumentId = documentId, GroupId = groupId }, transaction);
-            }
-
-            // Commit transaction
-            transaction.Commit();
-
-            return await GetDocumentById(documentId, cancellationToken);
-        }
-        catch (Exception)
-        {
-            // Rollback transaction on error
-            transaction.Rollback();
-            throw;
-        }
+        return document;
     }
 
     public async Task<Document> GetDocumentById(int id, CancellationToken cancellationToken)
