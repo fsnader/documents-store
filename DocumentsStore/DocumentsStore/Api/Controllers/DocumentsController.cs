@@ -1,7 +1,7 @@
+using DocumentsStore.Api.Authorization;
 using DocumentsStore.Api.DTOs;
-using DocumentsStore.Domain;
 using DocumentsStore.UseCases.Documents.Abstractions;
-using DocumentsStore.UseCases.Users.Abstractions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DocumentsStore.Api.Controllers;
@@ -13,30 +13,25 @@ public class DocumentsController : BaseController
     private readonly ICreateDocument _createDocument;
     private readonly IGetDocumentById _getDocumentById;
     private readonly IGetUserAuthorizedDocuments _getUserAuthorizedDocuments;
-    private readonly IGetUserById _getUserBy;
-
-    private async Task<User> GetCurrentUserAsync(CancellationToken cancellationToken)
-    {
-        var result = await _getUserBy.ExecuteAsync(1, cancellationToken);
-        return result.Result!;
-    }
+    private readonly IUserService _userService;
 
     public DocumentsController(
         ICreateDocument createDocument,
         IGetDocumentById getDocumentById,
-        IGetUserAuthorizedDocuments getUserAuthorizedDocuments, IGetUserById getUserBy)
+        IGetUserAuthorizedDocuments getUserAuthorizedDocuments,
+        IUserService userService)
     {
         _createDocument = createDocument;
         _getDocumentById = getDocumentById;
         _getUserAuthorizedDocuments = getUserAuthorizedDocuments;
-        _getUserBy = getUserBy;
+        _userService = userService;
     }
 
-    [HttpPost]
+    [HttpPost, Authorize(Roles = "Admin,Manager")]
     public async Task<IActionResult> Post([FromBody] CreateDocumentDto document, CancellationToken cancellationToken)
     {
         var result = await _createDocument.ExecuteAsync(
-            await GetCurrentUserAsync(cancellationToken),
+            await _userService.GetCurrentUserAsync(cancellationToken),
             document.ConvertToDocument(),
             document.AuthorizedUsers,
             document.AuthorizedGroups,
@@ -46,25 +41,24 @@ public class DocumentsController : BaseController
     }
 
 
-    [HttpGet("{id}")]
+    [HttpGet("{id}"), Authorize(Roles = "Admin,Manager,Regular")]
     public async Task<IActionResult> Get(int id, CancellationToken cancellationToken)
     {
         var result = await _getDocumentById.ExecuteAsync(
-            await GetCurrentUserAsync(cancellationToken),
+            await _userService.GetCurrentUserAsync(cancellationToken),
             id, cancellationToken);
 
         return UseCaseActionResult(result, DocumentDto.CreateFromDocument);
     }
 
-    [HttpGet]
+    [HttpGet, Authorize(Roles = "Admin,Manager,Regular")]
     public async Task<IActionResult> GetList(
         CancellationToken cancellationToken,
         [FromQuery] int take = 100,
-        [FromQuery] int skip = 0,
-        [FromQuery] int id = 1)
+        [FromQuery] int skip = 0)
     {
-        var user = await GetCurrentUserAsync(cancellationToken);
-        user.Id = id;
+        var user = await _userService.GetCurrentUserAsync(cancellationToken);
+        
         var result = await _getUserAuthorizedDocuments.ExecuteAsync(
             user,
             take,

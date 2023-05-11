@@ -1,11 +1,12 @@
 using DocumentsStore.Api.DTOs;
 using DocumentsStore.UseCases.Users.Abstractions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DocumentsStore.Api.Controllers
 {
     [Route("api/users")]
-    [ApiController]
+    [ApiController, Authorize(Roles = "Admin")]
     public class UsersController : BaseController
     {
         private readonly IGetUserById _getUserById;

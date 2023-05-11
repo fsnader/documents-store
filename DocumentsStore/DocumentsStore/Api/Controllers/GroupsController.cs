@@ -1,11 +1,12 @@
 using DocumentsStore.Api.DTOs;
 using DocumentsStore.UseCases.Groups.Abstractions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DocumentsStore.Api.Controllers
 {
     [Route("api/groups")]
-    [ApiController]
+    [ApiController, Authorize(Roles = "Admin")]
     public class GroupsController : BaseController
     {
         private readonly IGetGroupById _getGroupById;
