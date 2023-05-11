@@ -22,6 +22,7 @@ public class DocumentsRepository : IDocumentsRepository
         CancellationToken cancellationToken)
     {
         using var connection = _dbConnectionFactory.GenerateConnection();
+        connection.Open();
 
         // Begin transaction
         using var transaction = connection.BeginTransaction();

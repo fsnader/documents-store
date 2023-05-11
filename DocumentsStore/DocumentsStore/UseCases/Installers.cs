@@ -1,3 +1,5 @@
+using DocumentsStore.UseCases.Documents;
+using DocumentsStore.UseCases.Documents.Abstractions;
 using DocumentsStore.UseCases.Groups;
 using DocumentsStore.UseCases.Groups.Abstractions;
 using DocumentsStore.UseCases.Users;
@@ -27,6 +29,11 @@ public static class UseCasesInstallers
             .AddScoped<IDeleteGroup, DeleteGroup>()
             .AddScoped<IUpdateGroup, UpdateGroup>();
 
+        serviceCollection
+            .AddScoped<ICreateDocument, CreateDocument>()
+            .AddScoped<IGetDocumentById, GetDocumentById>()
+            .AddScoped<IGetUserAuthorizedDocuments, GetUserAuthorizedDocuments>();
+        
         return serviceCollection;
     }
 }

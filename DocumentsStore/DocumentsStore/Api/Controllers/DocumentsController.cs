@@ -24,11 +24,12 @@ public class DocumentsController : BaseController
     public DocumentsController(
         ICreateDocument createDocument,
         IGetDocumentById getDocumentById,
-        IGetUserAuthorizedDocuments getUserAuthorizedDocuments)
+        IGetUserAuthorizedDocuments getUserAuthorizedDocuments, IGetUserById getUserBy)
     {
         _createDocument = createDocument;
         _getDocumentById = getDocumentById;
         _getUserAuthorizedDocuments = getUserAuthorizedDocuments;
+        _getUserBy = getUserBy;
     }
 
     [HttpPost]

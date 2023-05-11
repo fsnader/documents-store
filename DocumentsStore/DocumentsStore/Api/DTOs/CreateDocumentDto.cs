@@ -9,8 +9,8 @@ public class CreateDocumentDto
     public Category Category { get; set; }
     public string Content { get; set; }
     
-    public IEnumerable<int> AuthorizedUsers { get; set; }
-    public IEnumerable<int> AuthorizedGroups { get; set; }
+    public int[] AuthorizedUsers { get; set; }
+    public int[]  AuthorizedGroups { get; set; }
 
     public Document ConvertToDocument() =>
         new Document

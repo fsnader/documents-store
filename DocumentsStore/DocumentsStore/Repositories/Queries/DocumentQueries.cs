@@ -4,7 +4,7 @@ public static class DocumentQueries
 {
     public const string CreateDocument = @"
         INSERT INTO ""Document"" (""UserId"", ""PostedDate"", ""Name"", ""Description"", ""Category"", ""Content"")
-        VALUES (@UserId, @PostedDate, @Name, @Description, @Category, @Content)
+        VALUES (@UserId, @PostedDate, @Name, @Description, @CategoryString::""DocumentCategory"", @Content)
         RETURNING ""Id"";";
 
     public const string InsertAuthorizedUser = @"
@@ -26,17 +26,21 @@ public static class DocumentQueries
         WHERE ""DocumentId"" = @Id;";
 
     public static readonly string ListUserAuthorizedDocuments = @"
-        SELECT d.*
+    SELECT DISTINCT d.*
         FROM ""Document"" d
         INNER JOIN ""DocumentUserPermission"" dup ON d.""Id"" = dup.""DocumentId""
         INNER JOIN ""User"" u ON dup.""UserId"" = u.""Id""
         WHERE dup.""UserId"" = @UserId
     UNION
+        SELECT *
+        FROM ""Document""
+        WHERE ""UserId"" = @UserId
+    UNION
         SELECT d.*
         FROM ""Document"" d
-        INNER JOIN ""DocumentGroupPermission"" dgp ON d.""Id"" = dgp.""DocumentId""
-        INNER JOIN ""UserGroup"" gu ON dgp.""GroupId"" = gu.""GroupId""
-        INNER JOIN ""User"" u ON gu.""UserId"" = u.""Id""
+            INNER JOIN ""DocumentGroupPermission"" dgp ON d.""Id"" = dgp.""DocumentId""
+            INNER JOIN ""UserGroup"" gu ON dgp.""GroupId"" = gu.""GroupId""
+            INNER JOIN ""User"" u ON gu.""UserId"" = u.""Id""
         WHERE gu.""UserId"" = @UserId
     ORDER BY ""PostedDate"" DESC
     LIMIT @Take OFFSET @Skip;
