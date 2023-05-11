@@ -38,7 +38,7 @@ public static class DocumentQueries
 ";
 
     public static readonly string ListUserAuthorizedDocuments = @"
-    SELECT DISTINCT d.*
+    SELECT d.*
         FROM ""Document"" d
         INNER JOIN ""DocumentUserPermission"" dup ON d.""Id"" = dup.""DocumentId""
         INNER JOIN ""User"" u ON dup.""UserId"" = u.""Id""
