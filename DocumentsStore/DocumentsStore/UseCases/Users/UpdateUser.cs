@@ -1,5 +1,6 @@
 using DocumentsStore.Domain;
 using DocumentsStore.Repositories.Abstractions;
+using DocumentsStore.Repositories.Exceptions;
 using DocumentsStore.UseCases.Users.Abstractions;
 
 namespace DocumentsStore.UseCases.Users;
@@ -20,13 +21,20 @@ public class UpdateUser : IUpdateUser
             return UseCaseResult<User>.BadRequest("Please provide a valid id");
         }
 
-        var updated = await _usersRepository.UpdateAsync(id, user, cancellationToken);
-
-        if (updated is null)
+        try
         {
-            return UseCaseResult<User>.NotFound();
+            var updated = await _usersRepository.UpdateAsync(id, user, cancellationToken);
+
+            if (updated is null)
+            {
+                return UseCaseResult<User>.NotFound();
+            }
+
+            return UseCaseResult<User>.Success(updated);
         }
-        
-        return UseCaseResult<User>.Success(updated);
+        catch (UniqueException)
+        {
+            return UseCaseResult<User>.BadRequest("Email needs to be unique");
+        }
     }
 }

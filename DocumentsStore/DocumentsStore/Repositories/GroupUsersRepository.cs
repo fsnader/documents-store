@@ -2,7 +2,9 @@ using Dapper;
 using DocumentsStore.Domain;
 using DocumentsStore.Repositories.Abstractions;
 using DocumentsStore.Repositories.Database;
+using DocumentsStore.Repositories.Exceptions;
 using DocumentsStore.Repositories.Queries;
+using Npgsql;
 
 namespace DocumentsStore.Repositories;
 
@@ -17,13 +19,26 @@ public class GroupUsersRepository : IGroupUsersRepository
 
     public async Task<IEnumerable<Group>> AddUserToGroup(int userId, int groupId, CancellationToken cancellationToken)
     {
-        using var db = _connectionFactory.GenerateConnection();
+        // TODO: Make the unique constraint exception handling global
+        try
+        {
+            using var db = _connectionFactory.GenerateConnection();
 
-        var parameters = new { UserId = userId, GroupId = groupId };
+            var parameters = new { UserId = userId, GroupId = groupId };
 
-        await db.ExecuteAsync(GroupUsersQueries.AddUserToGroup, parameters);
+            await db.ExecuteAsync(GroupUsersQueries.AddUserToGroup, parameters);
 
-        return await GetGroupsByUserIdAsync(userId, cancellationToken);
+            return await GetGroupsByUserIdAsync(userId, cancellationToken);
+        }
+        catch (PostgresException ex)
+        {
+            if (ex.SqlState == PostgresErrorCodes.UniqueViolation)
+            {
+                throw new UniqueException();
+            }
+            
+            throw;
+        }
     }
 
     public async Task<IEnumerable<Group>> RemoveUserFromGroup(int userId, int groupId, CancellationToken cancellationToken)

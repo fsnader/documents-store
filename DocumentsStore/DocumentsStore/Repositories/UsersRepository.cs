@@ -2,7 +2,9 @@ using Dapper;
 using DocumentsStore.Domain;
 using DocumentsStore.Repositories.Abstractions;
 using DocumentsStore.Repositories.Database;
+using DocumentsStore.Repositories.Exceptions;
 using DocumentsStore.Repositories.Queries;
+using Npgsql;
 
 namespace DocumentsStore.Repositories;
 
@@ -25,33 +27,57 @@ public class UsersRepository : IUsersRepository
 
     public async Task<User> CreateAsync(User user, CancellationToken cancellationToken)
     {
-        using var db = _connectionFactory.GenerateConnection();
-
-        var parameters = new
+        try
         {
-            user.Name,
-            user.Email,
-            Role = user.Role.ToString()
-        };
+            using var db = _connectionFactory.GenerateConnection();
 
-        var result = await db.QueryFirstOrDefaultAsync<User>(UserQueries.Create, parameters);
+            var parameters = new
+            {
+                user.Name,
+                user.Email,
+                Role = user.Role.ToString()
+            };
 
-        return result;
+            var result = await db.QueryFirstOrDefaultAsync<User>(UserQueries.Create, parameters);
+
+            return result;
+        }
+        catch (PostgresException ex)
+        {
+            if (ex.SqlState == PostgresErrorCodes.UniqueViolation)
+            {
+                throw new UniqueException();
+            }
+            
+            throw;
+        }
     }
 
     public async Task<User?> UpdateAsync(int id, User user, CancellationToken cancellationToken)
     {
-        using var db = _connectionFactory.GenerateConnection();
-
-        var parameters = new
+        try
         {
-            user.Name,
-            user.Email,
-            Role = user.Role.ToString(),
-            Id = id
-        };
+            using var db = _connectionFactory.GenerateConnection();
 
-        return await db.QueryFirstOrDefaultAsync<User>(UserQueries.Update, parameters);
+            var parameters = new
+            {
+                user.Name,
+                user.Email,
+                Role = user.Role.ToString(),
+                Id = id
+            };
+
+            return await db.QueryFirstOrDefaultAsync<User>(UserQueries.Update, parameters);
+        }
+        catch (PostgresException ex)
+        {
+            if (ex.SqlState == PostgresErrorCodes.UniqueViolation)
+            {
+                throw new UniqueException();
+            }
+            
+            throw;
+        }
     }
 
     public async Task<User?> DeleteAsync(int id, CancellationToken cancellationToken)

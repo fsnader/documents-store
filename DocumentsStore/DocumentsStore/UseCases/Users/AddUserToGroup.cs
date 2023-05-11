@@ -1,5 +1,6 @@
 using DocumentsStore.Domain;
 using DocumentsStore.Repositories.Abstractions;
+using DocumentsStore.Repositories.Exceptions;
 using DocumentsStore.UseCases.Users.Abstractions;
 
 namespace DocumentsStore.UseCases.Users;
@@ -34,9 +35,15 @@ public class AddUserToGroup : IAddUserToGroup
         {
             return UseCaseResult<User>.NotFound("Group not found");
         }
-        
-        user.Groups = await _groupUsersRepository.AddUserToGroup(userId, groupId, cancellationToken);
 
-        return UseCaseResult<User>.Success(user);
+        try
+        {
+            user.Groups = await _groupUsersRepository.AddUserToGroup(userId, groupId, cancellationToken);
+            return UseCaseResult<User>.Success(user);
+        }
+        catch (UniqueException)
+        {
+            return UseCaseResult<User>.BadRequest("This user is already a group member");
+        }
     }
 }

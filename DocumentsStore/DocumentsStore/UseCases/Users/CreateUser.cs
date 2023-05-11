@@ -1,5 +1,6 @@
 using DocumentsStore.Domain;
 using DocumentsStore.Repositories.Abstractions;
+using DocumentsStore.Repositories.Exceptions;
 using DocumentsStore.UseCases.Users.Abstractions;
 
 namespace DocumentsStore.UseCases.Users;
@@ -17,9 +18,16 @@ public class CreateUser : ICreateUser
             return UseCaseResult<User>.BadRequest();
         }
 
-        var created = await _usersRepository.CreateAsync(user, cancellationToken);
-        
-        return UseCaseResult<User>.Success(created);
+        try
+        {
+            var created = await _usersRepository.CreateAsync(user, cancellationToken);
+
+            return UseCaseResult<User>.Success(created);
+        }
+        catch (UniqueException)
+        {
+            return UseCaseResult<User>.BadRequest("Email needs to be unique");
+        }
     }
     
     private bool IsInputValid(User user) =>
