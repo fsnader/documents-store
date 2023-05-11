@@ -82,3 +82,7 @@ BEGIN
                 VALUES (document_id, id);
     END LOOP;
 END; $$
+
+-- INSERT INITIAL ADMIN USER
+INSERT INTO "User" ("Name", "Email", "Role")
+VALUES ('admin', 'admin@admin.com', 'Admin'::"UserRole");
