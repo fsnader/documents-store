@@ -21,7 +21,6 @@ CREATE TABLE IF NOT EXISTS "UserGroup" (
   FOREIGN KEY ("GroupId") REFERENCES "Group" ("Id") ON DELETE CASCADE
 );
 
-
 CREATE TYPE "DocumentCategory" AS ENUM ('General', 'Technical', 'Legal');
 
 CREATE TABLE IF NOT EXISTS "Document" (
@@ -35,12 +34,18 @@ CREATE TABLE IF NOT EXISTS "Document" (
   FOREIGN KEY ("UserId") REFERENCES "User" ("Id") ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS "DocumentPermission" (
-  "DocumentId" INTEGER NOT NULL,
-  "UserId" INTEGER,
-  "GroupId" INTEGER,
-  PRIMARY KEY ("DocumentId", "UserId", "GroupId"),
-  FOREIGN KEY ("DocumentId") REFERENCES "Document" ("Id") ON DELETE CASCADE,
-  FOREIGN KEY ("UserId") REFERENCES "User" ("Id") ON DELETE CASCADE,
-  FOREIGN KEY ("GroupId") REFERENCES "Group" ("Id") ON DELETE CASCADE
+CREATE TABLE "DocumentUserPermission" (
+    "DocumentId" INTEGER NOT NULL,
+    "UserId" INTEGER NOT NULL,
+    PRIMARY KEY ("DocumentId", "UserId"),
+    FOREIGN KEY ("UserId") REFERENCES "User" ("Id"),
+    FOREIGN KEY ("DocumentId") REFERENCES "Document" ("Id")
+);
+
+CREATE TABLE "DocumentGroupPermission" (
+    "DocumentId" INTEGER NOT NULL,
+    "GroupId" INTEGER NOT NULL,
+    PRIMARY KEY ("DocumentId", "GroupId"),
+    FOREIGN KEY ("GroupId") REFERENCES "Group" ("Id"),
+    FOREIGN KEY ("DocumentId") REFERENCES "Document" ("Id")
 );

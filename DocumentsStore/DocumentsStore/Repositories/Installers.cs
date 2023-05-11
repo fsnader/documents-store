@@ -12,6 +12,7 @@ public static class Installers
             .AddSingleton<IDbConnectionFactory, DbConnectionFactory>()
             .AddScoped<IUsersRepository, UsersRepository>()
             .AddScoped<IGroupsRepository, GroupsRepository>()
-            .AddScoped<IGroupUsersRepository, GroupUsersRepository>();
+            .AddScoped<IGroupUsersRepository, GroupUsersRepository>()
+            .AddScoped<IDocumentsRepository, DocumentsRepository>();
     }
 }
