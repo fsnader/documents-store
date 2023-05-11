@@ -60,10 +60,13 @@ public class DocumentsController : BaseController
     public async Task<IActionResult> GetList(
         CancellationToken cancellationToken,
         [FromQuery] int take = 100,
-        [FromQuery] int skip = 0)
+        [FromQuery] int skip = 0,
+        [FromQuery] int id = 1)
     {
+        var user = await GetCurrentUserAsync(cancellationToken);
+        user.Id = id;
         var result = await _getUserAuthorizedDocuments.ExecuteAsync(
-            await GetCurrentUserAsync(cancellationToken),
+            user,
             take,
             skip,
             cancellationToken);

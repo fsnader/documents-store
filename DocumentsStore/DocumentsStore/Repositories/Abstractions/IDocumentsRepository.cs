@@ -11,7 +11,7 @@ public interface IDocumentsRepository
         IEnumerable<int> authorizedGroups,
         CancellationToken cancellationToken);
 
-    public Task<Document> GetDocumentById(int id, CancellationToken cancellationToken);
+    public Task<Document?> GetDocumentById(int id, CancellationToken cancellationToken);
 
     public Task<bool> CheckUserDocumentPermission(int id, int userId, CancellationToken cancellationToken);
 

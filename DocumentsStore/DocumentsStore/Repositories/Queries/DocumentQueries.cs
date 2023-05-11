@@ -19,19 +19,19 @@ public static class DocumentQueries
     public const string CheckUserDocumentPermission = @"
         SELECT EXISTS (
             SELECT 1 FROM ""Document""
-            WHERE ""Id"" = @documentId
+            WHERE ""Id"" = @DocumentId
             AND (
-                ""UserId"" = @userId
+                ""UserId"" = @UserId
                 OR EXISTS (
                     SELECT 1 FROM ""DocumentUserPermission""
-                    WHERE ""DocumentId"" = @documentId
-                    AND ""UserId"" = @userId
+                    WHERE ""DocumentId"" = @DocumentId
+                    AND ""UserId"" = @UserId
                 )
                 OR EXISTS (
                     SELECT 1 FROM ""DocumentGroupPermission""
                     INNER JOIN ""UserGroup"" ON ""UserGroup"".""GroupId"" = ""DocumentGroupPermission"".""GroupId""
-                    WHERE ""DocumentGroupPermission"".""DocumentId"" = @documentId
-                    AND ""UserGroup"".""UserId"" = @userId
+                    WHERE ""DocumentGroupPermission"".""DocumentId"" = @DocumentId
+                    AND ""UserGroup"".""UserId"" = @UserId
                 )
             )
         );
