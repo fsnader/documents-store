@@ -51,10 +51,10 @@ namespace DocumentsStore.Api.Controllers
 
         [HttpPost]
         [ProducesResponseType(typeof(GroupDto), 200)]
-        public async Task<IActionResult> Post([FromBody] GroupDto Group, CancellationToken cancellationToken)
+        public async Task<IActionResult> Post([FromBody] GroupDto group, CancellationToken cancellationToken)
         {
             var result = await _createGroup.ExecuteAsync(
-                Group.ConvertToGroup(), 
+                group.ConvertToGroup(), 
                 cancellationToken);
 
             return UseCaseActionResult(result, GroupDto.CreateFromGroup);
