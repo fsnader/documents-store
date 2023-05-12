@@ -7,7 +7,7 @@ using DocumentsStore.Domain;
 using DocumentsStore.IntegrationTests.Helpers;
 using Microsoft.AspNetCore.Mvc.Testing;
 
-namespace DocumentsStore.IntegrationTests.Documents
+namespace DocumentsStore.IntegrationTests
 {
     public class CreateDocumentTests : IClassFixture<WebApplicationFactory<Program>>, IAsyncLifetime
     {

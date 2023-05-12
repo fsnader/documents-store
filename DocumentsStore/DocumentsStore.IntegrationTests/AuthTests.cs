@@ -6,7 +6,7 @@ using DocumentsStore.Domain;
 using DocumentsStore.IntegrationTests.Helpers;
 using Microsoft.AspNetCore.Mvc.Testing;
 
-namespace DocumentsStore.IntegrationTests.Authentication
+namespace DocumentsStore.IntegrationTests
 {
     public class AuthTests : IClassFixture<WebApplicationFactory<Program>>
     {
@@ -24,13 +24,17 @@ namespace DocumentsStore.IntegrationTests.Authentication
         [Fact]
         public async Task LoginUser()
         {
-            // Arrange and Act   
-            var response = await _client.PostAsJsonAsync("/api/auth/login", new { Id = 1 });
+            // Arrange and Act 
+            var user = await _client.CreateUser(Role.Admin);
+            
+            var response = await _client.PostAsJsonAsync("/api/auth/login", new { Id = user.Id });
             var content = await response.Content.ReadAsStringAsync();
 
             // Assert
             response.EnsureSuccessStatusCode();
             Assert.False(string.IsNullOrWhiteSpace(content));
+
+            await DeleteCreatedUser(user);
         }
         
         [Fact]
