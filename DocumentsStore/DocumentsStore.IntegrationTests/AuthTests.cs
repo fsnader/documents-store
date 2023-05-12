@@ -15,8 +15,6 @@ namespace DocumentsStore.IntegrationTests
         {
             _testFixtureBase = testFixtureBase;
             _fixture = new Fixture();
-          
-            // Invoke the app
             _client = _testFixtureBase.CreateDefaultClient();
         }
 
