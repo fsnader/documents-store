@@ -28,7 +28,7 @@ public class DocumentsRepository : IDocumentsRepository
         parameters.Add("user_id", document.UserId);
         parameters.Add("name", document.Name);
         parameters.Add("description", document.Description);
-        parameters.Add("category", document.CategoryString);
+        parameters.Add("category", document.Category.ToString());
         parameters.Add("content", document.Content);
         parameters.Add("posted_date", document.PostedDate);
         parameters.Add("authorized_users", authorizedUsers);

@@ -7,7 +7,6 @@ public class Document
     public string Name { get; set; }
     public string Description { get; set; }
     public Category Category { get; set; }
-    public string CategoryString => Category.ToString();
     public string Content { get; set; }
     public DateTimeOffset PostedDate { get; set; }
 
