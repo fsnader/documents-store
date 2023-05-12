@@ -30,7 +30,7 @@ namespace DocumentsStore.Api.Controllers
         }
         
         [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<GroupDto>), 200)]
+        [ProducesResponseType(typeof(GroupDto[]), 200)]
         public async Task<IActionResult> Get(
             CancellationToken cancellationToken,
             [FromQuery] int take = 100,
@@ -63,11 +63,11 @@ namespace DocumentsStore.Api.Controllers
 
         [HttpPut("{id}")]
         [ProducesResponseType(typeof(GroupDto), 200)]
-        public async Task<IActionResult> Put(int id, [FromBody] GroupDto Group, CancellationToken cancellationToken)
+        public async Task<IActionResult> Put(int id, [FromBody] GroupDto group, CancellationToken cancellationToken)
         {
             var result = await _updateGroup.ExecuteAsync(
                 id,
-                Group.ConvertToGroup(),
+                group.ConvertToGroup(),
                 cancellationToken);
 
             return UseCaseActionResult(result, GroupDto.CreateFromGroup);

@@ -28,6 +28,7 @@ public class DocumentsController : BaseController
     }
 
     [HttpPost, Authorize(Roles = "Admin,Manager")]
+    [ProducesResponseType(typeof(DocumentDto), 200)]
     public async Task<IActionResult> Post([FromBody] CreateDocumentDto document, CancellationToken cancellationToken)
     {
         var result = await _createDocument.ExecuteAsync(
@@ -42,6 +43,7 @@ public class DocumentsController : BaseController
 
 
     [HttpGet("{id}"), Authorize(Roles = "Admin,Manager,Regular")]
+    [ProducesResponseType(typeof(DocumentDto), 200)]
     public async Task<IActionResult> Get(int id, CancellationToken cancellationToken)
     {
         var result = await _getDocumentById.ExecuteAsync(
@@ -52,6 +54,7 @@ public class DocumentsController : BaseController
     }
 
     [HttpGet, Authorize(Roles = "Admin,Manager,Regular")]
+    [ProducesResponseType(typeof(DocumentDto[]), 200)]
     public async Task<IActionResult> GetList(
         CancellationToken cancellationToken,
         [FromQuery] int take = 100,
