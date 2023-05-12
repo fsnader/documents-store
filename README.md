@@ -1,5 +1,6 @@
 # Document Management API
 This API provides endpoints for document management, group management, and user management.
+The app is built using .NET 7, Dapper and Database First.
 
 ## Database setup
 
