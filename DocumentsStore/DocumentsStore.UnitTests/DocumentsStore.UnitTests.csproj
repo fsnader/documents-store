@@ -23,10 +23,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="UseCases\Users" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\DocumentsStore\DocumentsStore.csproj" />
     </ItemGroup>
 
