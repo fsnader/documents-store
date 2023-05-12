@@ -16,7 +16,7 @@ public class CreateDocument : ICreateDocument
     public async Task<UseCaseResult<Document>> ExecuteAsync(User user, Document document, int[] users, int[] groups,
         CancellationToken cancellationToken)
     {
-        if (user.Role != Role.Admin && user.Role == Role.Manager)
+        if (user.Role != Role.Admin && user.Role != Role.Manager)
         {
             return UseCaseResult<Document>.Unauthorized("User doesn't have permission to perform this action");
         }
@@ -41,6 +41,8 @@ public class CreateDocument : ICreateDocument
 
     private bool IsValid(Document document)
     {
-        return true;
+        return !string.IsNullOrWhiteSpace(document.Name) &&
+               !string.IsNullOrWhiteSpace(document.Description) &&
+               !string.IsNullOrWhiteSpace(document.Content);
     }
 }
