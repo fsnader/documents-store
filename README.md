@@ -1,10 +1,10 @@
 # Document Management API
 This API provides endpoints for document management, group management, and user management.
-The app is built using .NET 7, Dapper and Database First.
+The app is built using .NET 7, Dapper and PostgreSQL.
 
 ## Database setup
 
-This API uses PostgreSQL as its database engine. To run the API and its associated tests, you will need to have Docker installed on your machine. Once you have Docker installed, you can run the following command to start the PostgreSQL server and pgAdmin container:
+To run the API and its associated tests, you will need to have Docker installed on your machine. Once you have Docker installed, you can run the following command to start the PostgreSQL server and pgAdmin container:
 
 ```bash
 docker-compose up -d
