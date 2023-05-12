@@ -1,9 +1,10 @@
+using System.Net;
 using System.Net.Http.Json;
 using AutoFixture;
 using DocumentsStore.Domain;
 using Microsoft.AspNetCore.Mvc.Testing;
 
-namespace DocumentsStore.IntegrationTests
+namespace DocumentsStore.IntegrationTests.Authentication
 {
     public class AuthTests : IClassFixture<WebApplicationFactory<Program>>
     {
@@ -27,6 +28,18 @@ namespace DocumentsStore.IntegrationTests
 
             // Assert
             response.EnsureSuccessStatusCode();
+            Assert.False(string.IsNullOrWhiteSpace(content));
+        }
+        
+        [Fact]
+        public async Task LoginUser_WithInvalidId_ReturnsUnauthorized()
+        {
+            // Arrange and Act   
+            var response = await _client.PostAsJsonAsync("/api/auth/login", new { Id = -1 });
+            var content = await response.Content.ReadAsStringAsync();
+
+            // Assert
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             Assert.False(string.IsNullOrWhiteSpace(content));
         }
 
