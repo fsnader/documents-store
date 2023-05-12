@@ -32,7 +32,9 @@ public static class UseCasesInstallers
         serviceCollection
             .AddScoped<ICreateDocument, CreateDocument>()
             .AddScoped<IGetDocumentById, GetDocumentById>()
-            .AddScoped<IGetUserAuthorizedDocuments, GetUserAuthorizedDocuments>();
+            .AddScoped<IGetUserAuthorizedDocuments, GetUserAuthorizedDocuments>()
+            .AddScoped<IAddDocumentPermission, AddDocumentPermission>()
+            .AddScoped<IRemoveDocumentPermission, RemoveDocumentPermission>();
         
         return serviceCollection;
     }

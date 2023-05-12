@@ -3,7 +3,9 @@ using Dapper;
 using DocumentsStore.Domain;
 using DocumentsStore.Repositories.Abstractions;
 using DocumentsStore.Repositories.Database;
+using DocumentsStore.Repositories.Exceptions;
 using DocumentsStore.Repositories.Queries;
+using Npgsql;
 
 namespace DocumentsStore.Repositories;
 
@@ -48,6 +50,86 @@ public class DocumentsRepository : IDocumentsRepository
 
         var query = DocumentQueries.GetDocumentById;
         return await connection.QueryFirstOrDefaultAsync<Document>(query, new { Id = id });
+    }
+
+    public async Task AddDocumentUserPermissionAsync(
+        int documentId, 
+        int userId,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            using var connection = _dbConnectionFactory.GenerateConnection();
+            
+            var query = DocumentQueries.InsertUsePermission;
+            await connection.ExecuteAsync(query, new
+            {
+                DocumentId = documentId,
+                UserId = userId,
+            });
+        }
+        catch (PostgresException ex)
+        {
+            if (ex.SqlState == PostgresErrorCodes.UniqueViolation)
+            {
+                throw new UniqueException();
+            }
+            
+            throw;
+        }
+    }
+
+    public async Task RemoveDocumentUserPermissionAsync(int documentId, int userId, CancellationToken cancellationToken)
+    {
+        using var connection = _dbConnectionFactory.GenerateConnection();
+            
+        var query = DocumentQueries.RemoveUserPermission;
+        
+        await connection.ExecuteAsync(query, new
+        {
+            DocumentId = documentId,
+            UserId = userId,
+        });
+    }
+
+    public async Task AddDocumentGroupsPermissionAsync(
+        int documentId, 
+        int groupId,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            using var connection = _dbConnectionFactory.GenerateConnection();
+            
+            var query = DocumentQueries.InsertGroupPermission;
+            await connection.ExecuteAsync(query, new
+            {
+                DocumentId = documentId,
+                GroupId = groupId,
+            });
+        }
+        catch (PostgresException ex)
+        {
+            if (ex.SqlState == PostgresErrorCodes.UniqueViolation)
+            {
+                throw new UniqueException();
+            }
+            
+            throw;
+        }
+    }
+
+    public async Task RemoveDocumentGroupsPermissionAsync(int documentId, int groupId, CancellationToken cancellationToken)
+    {
+        using var connection = _dbConnectionFactory.GenerateConnection();
+            
+        var query = DocumentQueries.RemoveGroupPermission;
+        
+        await connection.ExecuteAsync(query, new
+        {
+            DocumentId = documentId,
+            GroupId = groupId,
+        });
     }
 
     public async Task<IEnumerable<int>> GetDocumentUsersPermissionsAsync(int documentId, CancellationToken cancellationToken)

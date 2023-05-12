@@ -16,9 +16,29 @@ public interface IDocumentsRepository
     public Task<IEnumerable<int>> GetDocumentUsersPermissionsAsync(
         int documentId,
         CancellationToken cancellationToken);
-    
-    public Task<IEnumerable<int>> GetDocumentGroupsPermissionsAsync(
+
+    public Task AddDocumentUserPermissionAsync(
         int documentId,
+        int userId,
+        CancellationToken cancellationToken);
+    
+    public Task RemoveDocumentUserPermissionAsync(
+        int documentId,
+        int userId,
+        CancellationToken cancellationToken);
+    
+    public Task<IEnumerable<int>>  GetDocumentGroupsPermissionsAsync(
+        int documentId,
+        CancellationToken cancellationToken);
+    
+    public Task AddDocumentGroupsPermissionAsync(
+        int documentId,
+        int groupId,
+        CancellationToken cancellationToken);
+    
+    public Task RemoveDocumentGroupsPermissionAsync(
+        int documentId,
+        int groupId,
         CancellationToken cancellationToken);
 
     public Task<bool> CheckUserDocumentPermissionAsync(int id, int userId, CancellationToken cancellationToken);

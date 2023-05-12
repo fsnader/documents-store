@@ -22,7 +22,6 @@ public class GetDocumentById : IGetDocumentById
         
         var document = await documentTask;
         
-
         if (document is null)
         {
             return UseCaseResult<Document>.NotFound();

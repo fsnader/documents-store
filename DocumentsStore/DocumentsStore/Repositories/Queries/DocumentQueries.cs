@@ -14,13 +14,21 @@ public static class DocumentQueries
         WHERE ""DocumentId"" = @DocumentId
     ";
     
-    public const string InsertAuthorizedUser = @"
+    public const string InsertUsePermission = @"
         INSERT INTO ""DocumentUserPermission"" (""DocumentId"", ""UserId"")
         VALUES (@DocumentId, @UserId);";
+    
+    public const string RemoveUserPermission = @"
+        DELETE FROM ""DocumentUserPermission""
+        WHERE ""DocumentId"" = @DocumentId AND ""UserId"" = @UserId;";
 
-    public const string InsertAuthorizedGroup = @"
+    public const string InsertGroupPermission = @"
         INSERT INTO ""DocumentGroupPermission"" (""DocumentId"", ""GroupId"")
         VALUES (@DocumentId, @GroupId);";
+    
+    public const string RemoveGroupPermission = @"
+        DELETE FROM ""DocumentGroupPermission""
+        WHERE ""DocumentId"" = @DocumentId AND ""GroupId"" = @GroupId;";
 
     public const string GetDocumentById = @"
         SELECT *
