@@ -1,4 +1,5 @@
 using DocumentsStore.Api.Authorization;
+using DocumentsStore.Api.DTOs.Authorization;
 using DocumentsStore.Api.DTOs.Users;
 using DocumentsStore.UseCases.Users.Abstractions;
 using Microsoft.AspNetCore.Authorization;
@@ -32,9 +33,9 @@ public class AuthController : BaseController
     }
     
     [HttpPost("login")]
-    public async Task<IActionResult> GetToken([FromForm] int userId, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetToken([FromBody] LoginDto login, CancellationToken cancellationToken)
     {
-        var token = await _userService.CreateTokenAsync(userId, cancellationToken);
+        var token = await _userService.CreateTokenAsync(login.Id, cancellationToken);
 
         if (token is null)
         {
