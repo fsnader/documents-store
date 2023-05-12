@@ -35,8 +35,7 @@ public class GetDocumentById : IGetDocumentById
         
         document.AuthorizedUsers = await authorizedUsers;
         document.AuthorizedGroups = await authorizedGroups;
-
-
+        
         return UseCaseResult<Document>.Success(document);
     }
 }
