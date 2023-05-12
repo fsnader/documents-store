@@ -1,6 +1,7 @@
 using System.Net.Http.Json;
 using System.Security.Authentication;
 using AutoFixture;
+using DocumentsStore.Api.DTOs.Groups;
 using DocumentsStore.Api.DTOs.Users;
 using DocumentsStore.Domain;
 using DocumentsStore.IntegrationTests.Helpers;
@@ -108,5 +109,70 @@ public class UsersTests : IClassFixture<WebApplicationFactory<Program>>, IAsyncL
         var deletedUser = await response.Content.ReadFromJsonAsync<UserDto>(JsonSerializer.Default);
         Assert.NotNull(deletedUser);
         Assert.Equal(user.Id, deletedUser.Id);
+    }
+
+    [Fact]
+    public async Task AddUserToGroup_Success()
+    {
+        // Arrange
+        var group = await _client.CreateGroup();
+        
+        // Act
+        var response = await _client.PostAsJsonAsync($"/api/users/{_user.Id}/groups/{group.Id}", new {});
+
+        // Assert
+        response.EnsureSuccessStatusCode();
+        var userWithGroups = await response.Content.ReadFromJsonAsync<UserWithGroupsDto>(JsonSerializer.Default);
+        Assert.NotNull(userWithGroups);
+        Assert.NotNull(userWithGroups.Groups);
+        Assert.Contains(group.Id, userWithGroups.Groups.Select(g => g.Id));
+
+        await _client.DeleteGroup(group.Id);
+    }
+
+    [Fact]
+    public async Task RemoveUserFromGroup_Success()
+    {
+        var group = await AddUserToNewGroup(_user.Id);
+        
+        // Act
+        var response = await _client.DeleteAsync($"/api/users/{_user.Id}/groups/{group.Id}");
+
+        // Assert
+        response.EnsureSuccessStatusCode();
+        var userWithGroups = await response.Content.ReadFromJsonAsync<UserWithGroupsDto>(JsonSerializer.Default);
+        Assert.NotNull(userWithGroups);
+        Assert.NotNull(userWithGroups.Groups);
+        Assert.DoesNotContain(group.Id, userWithGroups.Groups.Select(g => g.Id));
+        
+        await _client.DeleteGroup(group.Id);
+    }
+
+    [Fact]
+    public async Task GetUsersGroups_Success()
+    {
+        // Arrange
+        var group = await AddUserToNewGroup(_user.Id);
+        
+        // Act
+        var response = await _client.GetAsync($"/api/users/{_user.Id}/groups");
+
+        // Assert
+        response.EnsureSuccessStatusCode();
+        var groups = await response.Content.ReadFromJsonAsync<IEnumerable<GroupDto>>(JsonSerializer.Default);
+        Assert.NotNull(groups);
+        Assert.NotEmpty(groups);
+        
+        await _client.DeleteGroup(group.Id);
+    }
+    
+    private async Task<GroupDto> AddUserToNewGroup(int userId)
+    {
+        var group = await _client.CreateGroup();
+        
+        var response = await _client.PostAsJsonAsync($"/api/users/{userId}/groups/{group.Id}", new {});
+
+        response.EnsureSuccessStatusCode();
+        return group;
     }
 }
