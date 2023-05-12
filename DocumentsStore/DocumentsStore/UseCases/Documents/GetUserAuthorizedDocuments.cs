@@ -15,7 +15,7 @@ public class GetUserAuthorizedDocuments : IGetUserAuthorizedDocuments
 
     public async Task<UseCaseResult<IEnumerable<Document>>> ExecuteAsync(User user, int take, int skip, CancellationToken cancellationToken)
     {
-        var results = await _documentsRepository.ListUserAuthorizedDocuments(user.Id, take, skip, cancellationToken);
+        var results = await _documentsRepository.ListUserAuthorizedDocumentsAsync(user.Id, take, skip, cancellationToken);
         
         return UseCaseResult<IEnumerable<Document>>.Success(results);
     }

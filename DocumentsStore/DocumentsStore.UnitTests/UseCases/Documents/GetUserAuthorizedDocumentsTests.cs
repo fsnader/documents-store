@@ -32,7 +32,7 @@ public class GetUserAuthorizedDocumentsTests
             new Document { Id = 3, UserId = 1, Name = "Document 3", Content = "Content 3" }
         };
         _documentsRepositoryMock
-            .Setup(x => x.ListUserAuthorizedDocuments(user.Id, take, skip, default))
+            .Setup(x => x.ListUserAuthorizedDocumentsAsync(user.Id, take, skip, default))
             .ReturnsAsync(documents);
 
         // Act

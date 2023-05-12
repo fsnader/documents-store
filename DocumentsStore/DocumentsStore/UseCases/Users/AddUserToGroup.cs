@@ -38,7 +38,7 @@ public class AddUserToGroup : IAddUserToGroup
 
         try
         {
-            user.Groups = await _groupUsersRepository.AddUserToGroup(userId, groupId, cancellationToken);
+            user.Groups = await _groupUsersRepository.AddUserToGroupAsync(userId, groupId, cancellationToken);
             return UseCaseResult<User>.Success(user);
         }
         catch (UniqueException)

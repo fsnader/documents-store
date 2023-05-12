@@ -15,8 +15,8 @@ public class GetDocumentById : IGetDocumentById
     
     public async Task<UseCaseResult<Document>> ExecuteAsync(User user, int id, CancellationToken cancellationToken)
     {
-        var documentTask = _documentsRepository.GetDocumentById(id, cancellationToken);
-        var hasPermission = _documentsRepository.CheckUserDocumentPermission(id, user.Id, cancellationToken);
+        var documentTask = _documentsRepository.GetDocumentByIdAsync(id, cancellationToken);
+        var hasPermission = _documentsRepository.CheckUserDocumentPermissionAsync(id, user.Id, cancellationToken);
         var authorizedUsers = _documentsRepository.GetDocumentUsersPermissionsAsync(id, cancellationToken);
         var authorizedGroups = _documentsRepository.GetDocumentGroupsPermissionsAsync(id, cancellationToken);
         

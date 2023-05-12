@@ -27,7 +27,7 @@ public class GetDocumentByIdTests
         var cancellationToken = CancellationToken.None;
         
         _mocker.GetMock<IDocumentsRepository>()
-            .Setup(repo => repo.GetDocumentById(It.IsAny<int>(), cancellationToken))
+            .Setup(repo => repo.GetDocumentByIdAsync(It.IsAny<int>(), cancellationToken))
             .ReturnsAsync(() => null);
 
         // Act
@@ -47,11 +47,11 @@ public class GetDocumentByIdTests
         var document = new Document { Id = 1, UserId = 2 };
         
         _mocker.GetMock<IDocumentsRepository>()
-            .Setup(repo => repo.GetDocumentById(document.Id, cancellationToken))
+            .Setup(repo => repo.GetDocumentByIdAsync(document.Id, cancellationToken))
             .ReturnsAsync(() => document);
         
         _mocker.GetMock<IDocumentsRepository>()
-            .Setup(repo => repo.CheckUserDocumentPermission(document.Id, user.Id, cancellationToken))
+            .Setup(repo => repo.CheckUserDocumentPermissionAsync(document.Id, user.Id, cancellationToken))
             .ReturnsAsync(() => false);
 
         // Act
@@ -71,11 +71,11 @@ public class GetDocumentByIdTests
         var document = new Document { Id = 1, UserId = user.Id };
         
         _mocker.GetMock<IDocumentsRepository>()
-            .Setup(repo => repo.GetDocumentById(document.Id, cancellationToken))
+            .Setup(repo => repo.GetDocumentByIdAsync(document.Id, cancellationToken))
             .ReturnsAsync(() => document);
         
         _mocker.GetMock<IDocumentsRepository>()
-            .Setup(repo => repo.CheckUserDocumentPermission(document.Id, user.Id, cancellationToken))
+            .Setup(repo => repo.CheckUserDocumentPermissionAsync(document.Id, user.Id, cancellationToken))
             .ReturnsAsync(() => true);
 
         // Act

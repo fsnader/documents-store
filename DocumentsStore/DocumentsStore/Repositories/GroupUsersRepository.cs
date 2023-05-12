@@ -17,7 +17,7 @@ public class GroupUsersRepository : IGroupUsersRepository
         _connectionFactory = connectionFactory;
     }
 
-    public async Task<IEnumerable<Group>> AddUserToGroup(int userId, int groupId, CancellationToken cancellationToken)
+    public async Task<IEnumerable<Group>> AddUserToGroupAsync(int userId, int groupId, CancellationToken cancellationToken)
     {
         // TODO: Make the unique constraint exception handling global
         try
@@ -41,7 +41,7 @@ public class GroupUsersRepository : IGroupUsersRepository
         }
     }
 
-    public async Task<IEnumerable<Group>> RemoveUserFromGroup(int userId, int groupId, CancellationToken cancellationToken)
+    public async Task<IEnumerable<Group>> RemoveUserFromGroupAsync(int userId, int groupId, CancellationToken cancellationToken)
     {
         using var db = _connectionFactory.GenerateConnection();
         

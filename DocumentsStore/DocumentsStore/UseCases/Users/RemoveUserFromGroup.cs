@@ -35,7 +35,7 @@ public class RemoveUserFromGroup : IRemoveUserFromGroup
             return UseCaseResult<User>.NotFound("Group not found");
         }
         
-        user.Groups = await _groupUsersRepository.RemoveUserFromGroup(userId, groupId, cancellationToken);
+        user.Groups = await _groupUsersRepository.RemoveUserFromGroupAsync(userId, groupId, cancellationToken);
 
         return UseCaseResult<User>.Success(user);
     }

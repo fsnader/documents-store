@@ -42,7 +42,7 @@ public class DocumentsRepository : IDocumentsRepository
         return document;
     }
 
-    public async Task<Document?> GetDocumentById(int id, CancellationToken cancellationToken)
+    public async Task<Document?> GetDocumentByIdAsync(int id, CancellationToken cancellationToken)
     {
         using var connection = _dbConnectionFactory.GenerateConnection();
 
@@ -66,7 +66,7 @@ public class DocumentsRepository : IDocumentsRepository
         return await connection.QueryAsync<int>(query,new { DocumentId = documentId });
     }
 
-    public async Task<bool> CheckUserDocumentPermission(int id, int userId, CancellationToken cancellationToken)
+    public async Task<bool> CheckUserDocumentPermissionAsync(int id, int userId, CancellationToken cancellationToken)
     {
         using var connection = _dbConnectionFactory.GenerateConnection();
 
@@ -74,7 +74,7 @@ public class DocumentsRepository : IDocumentsRepository
         return await connection.QueryFirstOrDefaultAsync<bool>(query, new { DocumentId = id, UserId = userId });
     }
 
-    public async Task<IEnumerable<Document>> ListUserAuthorizedDocuments(int userId, int take, int skip, CancellationToken cancellationToken)
+    public async Task<IEnumerable<Document>> ListUserAuthorizedDocumentsAsync(int userId, int take, int skip, CancellationToken cancellationToken)
     {
         using var connection = _dbConnectionFactory.GenerateConnection();
 
