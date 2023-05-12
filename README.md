@@ -28,7 +28,7 @@ Users can have 3 roles:
 - Admin user: can CRUD users and groups, upload and download documents.
 
 ## Endpoints
-![img.png](img.png)
+![swagger](/images/api.png?raw=true)
 ### Documents
 - POST /api/documents: Allows authenticated users to upload a new document.
 - GET /api/documents: Allows authenticated users to retrieve a list of documents.
@@ -55,8 +55,8 @@ Users can have 3 roles:
 This project includes both unit tests and integration tests to ensure the quality and functionality of the API.
 
 ### Unit Tests
-The DocumentsStore.UnitTests project contains a suite of unit tests for testing the individual components of the API. These tests are designed to test the logic of the code in isolation, without relying on external dependencies. The tests are written using xUnit and Moq.AutoMock and can be run from Visual Studio or using the command line.
+The DocumentsStore.UnitTests project contains a suite of unit tests for testing the individual components of the API. These tests are designed to test the logic of the code in isolation, without relying on external dependencies. The tests are written using xUnit and can be run from Visual Studio or using the command line.
 
 ### Integration Tests
-The DocumentsStore.IntegrationTests project contains a suite of integration tests for testing the API endpoints. These tests are designed to test the functionality of the API as a whole, including its interactions with external dependencies such as databases and other APIs. The tests are written using xUnit and Microsoft.AspNetCore.TestHost and can be run from Visual Studio or using the command line.
+The DocumentsStore.IntegrationTests project contains a suite of integration tests for testing the API endpoints. These tests are designed to test the functionality of the API as a whole, including its interactions with external dependencies such as databases and other APIs. The tests are written using xUnit and can be run from Visual Studio or using the command line.
 
