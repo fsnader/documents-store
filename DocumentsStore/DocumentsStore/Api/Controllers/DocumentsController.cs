@@ -42,7 +42,6 @@ public class DocumentsController : BaseController
         return UseCaseActionResult(result, DocumentDto.CreateFromDocument);
     }
 
-
     [HttpGet("{id}"), Authorize(Roles = "Admin,Manager,Regular")]
     [ProducesResponseType(typeof(DocumentWithPermissionsDto), 200)]
     public async Task<IActionResult> Get(int id, CancellationToken cancellationToken)

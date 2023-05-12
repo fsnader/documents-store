@@ -38,16 +38,16 @@ CREATE TABLE "DocumentUserPermission" (
     "DocumentId" INTEGER NOT NULL,
     "UserId" INTEGER NOT NULL,
     PRIMARY KEY ("DocumentId", "UserId"),
-    FOREIGN KEY ("UserId") REFERENCES "User" ("Id"),
-    FOREIGN KEY ("DocumentId") REFERENCES "Document" ("Id")
+    FOREIGN KEY ("UserId") REFERENCES "User" ("Id")  ON DELETE CASCADE,
+    FOREIGN KEY ("DocumentId") REFERENCES "Document" ("Id")  ON DELETE CASCADE
 );
 
 CREATE TABLE "DocumentGroupPermission" (
     "DocumentId" INTEGER NOT NULL,
     "GroupId" INTEGER NOT NULL,
     PRIMARY KEY ("DocumentId", "GroupId"),
-    FOREIGN KEY ("GroupId") REFERENCES "Group" ("Id"),
-    FOREIGN KEY ("DocumentId") REFERENCES "Document" ("Id")
+    FOREIGN KEY ("GroupId") REFERENCES "Group" ("Id")  ON DELETE CASCADE,
+    FOREIGN KEY ("DocumentId") REFERENCES "Document" ("Id")  ON DELETE CASCADE
 );
 
 CREATE OR REPLACE PROCEDURE "CreateDocument"(

@@ -1,13 +1,11 @@
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Security.Authentication;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using AutoFixture;
 using DocumentsStore.Api.DTOs.Users;
 using DocumentsStore.Domain;
 
-namespace DocumentsStore.IntegrationTests;
+namespace DocumentsStore.IntegrationTests.Helpers;
 
 public static class HttpClientExtensions
 {
@@ -52,5 +50,11 @@ public static class HttpClientExtensions
         var user = await httpClient.CreateUser(role);
         await httpClient.Authenticate(user.Id);
         return user;
+    }
+
+    public static async Task DeleteUser(this HttpClient httpClient, int userId)
+    {
+        var response = await httpClient.DeleteAsync($"/api/users/{userId}");
+        response.EnsureSuccessStatusCode();
     }
 }

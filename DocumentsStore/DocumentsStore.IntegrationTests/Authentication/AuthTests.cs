@@ -1,7 +1,9 @@
 using System.Net;
 using System.Net.Http.Json;
 using AutoFixture;
+using DocumentsStore.Api.DTOs.Users;
 using DocumentsStore.Domain;
+using DocumentsStore.IntegrationTests.Helpers;
 using Microsoft.AspNetCore.Mvc.Testing;
 
 namespace DocumentsStore.IntegrationTests.Authentication
@@ -56,12 +58,14 @@ namespace DocumentsStore.IntegrationTests.Authentication
             
             // Arrange and Act   
             var response = await _client.PostAsJsonAsync("/api/auth/signup", payload);
-            
-            var content = await response.Content.ReadAsStringAsync();
+            var body = await response.Content.ReadFromJsonAsync<UserDto>(JsonSerializer.Default);
 
             // Assert
             response.EnsureSuccessStatusCode();
-            Assert.Contains(payload.Name, content);
+            Assert.NotNull(body);
+            Assert.Equal(payload.Name, body.Name);
+
+            await _client.DeleteUser(body.Id);
         }
     }
 }
