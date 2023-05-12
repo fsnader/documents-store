@@ -62,11 +62,11 @@ namespace DocumentsStore.Api.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(typeof(UserWithGroupsDto), 200)]
-        public async Task<IActionResult> Post([FromBody] CreateUserDto userWithGroups, CancellationToken cancellationToken)
+        [ProducesResponseType(typeof(UserDto), 200)]
+        public async Task<IActionResult> Post([FromBody] CreateUserDto user, CancellationToken cancellationToken)
         {
             var result = await _createUser.ExecuteAsync(
-                userWithGroups.ConvertToUser(),
+                user.ConvertToUser(),
                 cancellationToken);
 
             return UseCaseActionResult(result, UserDto.CreateFromUser);
