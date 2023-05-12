@@ -53,7 +53,7 @@ namespace DocumentsStore.IntegrationTests.Authentication
             {
                 Name = _fixture.Create<string>(),
                 Email = _fixture.Create<string>(),
-                Role = _fixture.Create<Role>(),
+                Role = Role.Admin,
             };
             
             // Arrange and Act   
@@ -64,7 +64,13 @@ namespace DocumentsStore.IntegrationTests.Authentication
             response.EnsureSuccessStatusCode();
             Assert.NotNull(body);
             Assert.Equal(payload.Name, body.Name);
+            
+            await DeleteCreatedUser(body);
+        }
 
+        private async Task DeleteCreatedUser(UserDto body)
+        {
+            await _client.Authenticate(body.Id);
             await _client.DeleteUser(body.Id);
         }
     }
