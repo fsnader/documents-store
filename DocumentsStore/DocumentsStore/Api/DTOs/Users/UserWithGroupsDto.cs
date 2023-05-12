@@ -1,3 +1,4 @@
+using DocumentsStore.Api.DTOs.Groups;
 using DocumentsStore.Domain;
 
 namespace DocumentsStore.Api.DTOs.Users;

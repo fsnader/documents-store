@@ -1,5 +1,6 @@
 using DocumentsStore.Api.Authorization;
 using DocumentsStore.Api.DTOs;
+using DocumentsStore.Api.DTOs.Documents;
 using DocumentsStore.UseCases.Documents.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -43,14 +44,14 @@ public class DocumentsController : BaseController
 
 
     [HttpGet("{id}"), Authorize(Roles = "Admin,Manager,Regular")]
-    [ProducesResponseType(typeof(DocumentDto), 200)]
+    [ProducesResponseType(typeof(DocumentWithPermissionsDto), 200)]
     public async Task<IActionResult> Get(int id, CancellationToken cancellationToken)
     {
         var result = await _getDocumentById.ExecuteAsync(
             await _userService.GetCurrentUserAsync(cancellationToken),
             id, cancellationToken);
 
-        return UseCaseActionResult(result, DocumentDto.CreateFromDocument);
+        return UseCaseActionResult(result, DocumentWithPermissionsDto.CreateFromDocument);
     }
 
     [HttpGet, Authorize(Roles = "Admin,Manager,Regular")]

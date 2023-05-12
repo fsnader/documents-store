@@ -2,6 +2,18 @@ namespace DocumentsStore.Repositories.Queries;
 
 public static class DocumentQueries
 {
+    public const string GetUsersPermissions = @"
+        SELECT ""UserId""
+        FROM ""DocumentUserPermission""
+        WHERE ""DocumentId"" = @DocumentId
+    ";
+    
+    public const string GetGroupsPermissions = @"
+        SELECT ""GroupId""
+        FROM ""DocumentGroupPermission""
+        WHERE ""DocumentId"" = @DocumentId
+    ";
+    
     public const string InsertAuthorizedUser = @"
         INSERT INTO ""DocumentUserPermission"" (""DocumentId"", ""UserId"")
         VALUES (@DocumentId, @UserId);";

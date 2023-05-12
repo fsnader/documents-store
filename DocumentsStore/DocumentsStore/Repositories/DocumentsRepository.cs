@@ -50,14 +50,28 @@ public class DocumentsRepository : IDocumentsRepository
         return await connection.QueryFirstOrDefaultAsync<Document>(query, new { Id = id });
     }
 
+    public async Task<IEnumerable<int>> GetDocumentUsersPermissionsAsync(int documentId, CancellationToken cancellationToken)
+    {
+        using var connection = _dbConnectionFactory.GenerateConnection();
+
+        var query = DocumentQueries.GetUsersPermissions;
+        return await connection.QueryAsync<int>(query,new { DocumentId = documentId });
+    }
+    
+    public async Task<IEnumerable<int>> GetDocumentGroupsPermissionsAsync(int documentId, CancellationToken cancellationToken)
+    {
+        using var connection = _dbConnectionFactory.GenerateConnection();
+
+        var query = DocumentQueries.GetGroupsPermissions;
+        return await connection.QueryAsync<int>(query,new { DocumentId = documentId });
+    }
+
     public async Task<bool> CheckUserDocumentPermission(int id, int userId, CancellationToken cancellationToken)
     {
         using var connection = _dbConnectionFactory.GenerateConnection();
 
         var query = DocumentQueries.CheckUserDocumentPermission;
-        var result = await connection.QueryFirstOrDefaultAsync<bool>(query, new { DocumentId = id, UserId = userId });
-
-        return result;
+        return await connection.QueryFirstOrDefaultAsync<bool>(query, new { DocumentId = id, UserId = userId });
     }
 
     public async Task<IEnumerable<Document>> ListUserAuthorizedDocuments(int userId, int take, int skip, CancellationToken cancellationToken)

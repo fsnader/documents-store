@@ -39,7 +39,7 @@ public class GetUserAuthorizedDocumentsTests
         var result = await _getUserAuthorizedDocuments.ExecuteAsync(user, take, skip, default);
 
         // Assert
-        Assert.NotNull(result);
+        Assert.NotNull(result.Result);
         Assert.Equal(3, result.Result.Count());
     }
 }

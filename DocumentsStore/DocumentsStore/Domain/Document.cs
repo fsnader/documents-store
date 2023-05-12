@@ -9,5 +9,6 @@ public class Document
     public Category Category { get; set; }
     public string Content { get; set; }
     public DateTimeOffset PostedDate { get; set; }
-
+    public IEnumerable<int> AuthorizedUsers { get; set; }
+    public IEnumerable<int>  AuthorizedGroups { get; set; }
 }

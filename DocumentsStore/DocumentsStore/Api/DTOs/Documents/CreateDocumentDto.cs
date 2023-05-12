@@ -1,6 +1,6 @@
 using DocumentsStore.Domain;
 
-namespace DocumentsStore.Api.DTOs;
+namespace DocumentsStore.Api.DTOs.Documents;
 
 public class CreateDocumentDto
 {

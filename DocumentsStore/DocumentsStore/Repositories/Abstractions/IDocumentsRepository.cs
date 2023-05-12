@@ -13,6 +13,14 @@ public interface IDocumentsRepository
 
     public Task<Document?> GetDocumentById(int id, CancellationToken cancellationToken);
 
+    public Task<IEnumerable<int>> GetDocumentUsersPermissionsAsync(
+        int documentId,
+        CancellationToken cancellationToken);
+    
+    public Task<IEnumerable<int>> GetDocumentGroupsPermissionsAsync(
+        int documentId,
+        CancellationToken cancellationToken);
+
     public Task<bool> CheckUserDocumentPermission(int id, int userId, CancellationToken cancellationToken);
 
     public Task<IEnumerable<Document>> ListUserAuthorizedDocuments(

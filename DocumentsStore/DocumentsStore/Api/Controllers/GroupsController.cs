@@ -1,4 +1,5 @@
 using DocumentsStore.Api.DTOs;
+using DocumentsStore.Api.DTOs.Groups;
 using DocumentsStore.UseCases.Groups.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
