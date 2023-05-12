@@ -1,5 +1,4 @@
 using System.Net.Http.Json;
-using System.Security.Authentication;
 using AutoFixture;
 using DocumentsStore.Api.DTOs.Groups;
 using DocumentsStore.Api.DTOs.Users;
