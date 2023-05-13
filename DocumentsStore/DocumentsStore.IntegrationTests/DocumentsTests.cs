@@ -100,5 +100,75 @@ namespace DocumentsStore.IntegrationTests
 
             return createdDocument!;
         }
+        
+        [Fact]
+        public async Task AddUserPermission_Should_Succeed()
+        {
+            // Arrange   
+            var document = await CreateDocument();
+            var user = await _client.CreateUser(Role.Regular);
+            
+            // Act
+            var response = await _client.PostAsJsonAsync($"/api/documents/{document.Id}/users/{user.Id}", new { });
+            
+            response.EnsureSuccessStatusCode();
+            var content = await response.Content.ReadFromJsonAsync<DocumentWithPermissionsDto>(JsonSerializer.Default);
+
+            Assert.NotNull(content);
+            await _client.DeleteUser(user.Id);
+        }
+        
+        [Fact]
+        public async Task AddGroupPermission_Should_Succeed()
+        {
+            // Arrange   
+            var document = await CreateDocument();
+            var group = await _client.CreateGroup();
+            
+            // Act
+            var response = await _client.PostAsJsonAsync($"/api/documents/{document.Id}/groups/{group.Id}", new { });
+            
+            response.EnsureSuccessStatusCode();
+            var content = await response.Content.ReadFromJsonAsync<DocumentWithPermissionsDto>(JsonSerializer.Default);
+
+            Assert.NotNull(content);
+            await _client.DeleteGroup(group.Id);
+        }
+        
+        [Fact]
+        public async Task RemoveUserPermission_Should_Succeed()
+        {
+            // Arrange   
+            var document = await CreateDocument();
+            
+            // Act
+            var response = await _client.DeleteAsync($"/api/documents/{document.Id}/users/{_user.Id}");
+            
+            response.EnsureSuccessStatusCode();
+            var content = await response.Content.ReadFromJsonAsync<DocumentWithPermissionsDto>(JsonSerializer.Default);
+
+            Assert.NotNull(content);
+        }
+        
+        [Fact]
+        public async Task RemoveGroupPermission_Should_Succeed()
+        {
+            // Arrange   
+            var document = await CreateDocument();
+            var group = await _client.CreateGroup();
+            var createResponse = await _client.PostAsJsonAsync($"/api/documents/{document.Id}/groups/{group.Id}", new { });
+            createResponse.EnsureSuccessStatusCode();
+
+            
+            // Act
+            var response = await _client.DeleteAsync($"/api/documents/{document.Id}/groups/{group.Id}");
+            
+            // Assert
+            response.EnsureSuccessStatusCode();
+            var content = await response.Content.ReadFromJsonAsync<DocumentWithPermissionsDto>(JsonSerializer.Default);
+
+            Assert.NotNull(content);
+            await _client.DeleteGroup(group.Id);
+        }
     }
 }
