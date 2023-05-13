@@ -34,7 +34,10 @@ Users can have 3 roles:
 - POST /api/documents: Allows authenticated users to upload a new document.
 - GET /api/documents: Allows authenticated users to retrieve a list of documents.
 - GET /api/documents/{id}: Allows authenticated users to retrieve a specific document by ID.
-
+- POST /api/documents/{id}/users/{userId}: Adds a user permission for the specified document by id
+- POST /api/documents/{id}/groups/{groupId}: Adds a group permission for the specified document by id
+- DELETE /api/documents/{id}/users/{userId}: Removes a user permission for the specified document by id
+- DELETE /api/documents/{id}/groups/{groupId}: Removes a group permission for the specified document by id
 ### Groups
 - GET /api/groups: Allows only admin users to retrieve a list of groups.
 - POST /api/groups: Allows only admin users to create a new group.
