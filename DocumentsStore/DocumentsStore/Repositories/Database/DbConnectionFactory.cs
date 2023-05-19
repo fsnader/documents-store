@@ -19,6 +19,9 @@ public class DbConnectionFactory : IDbConnectionFactory
             throw new NpgsqlException("Please provide a valid connection string");
         }
         
-        return new NpgsqlConnection(_connectionString);
+        var connection = new NpgsqlConnection(_connectionString);
+        Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
+
+        return connection;
     }
 }

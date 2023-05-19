@@ -64,22 +64,22 @@ CREATE OR REPLACE PROCEDURE create_document(
     language plpgsql
 as $$
 DECLARE
-    id INTEGER;
+    loop_id INTEGER;
 BEGIN
     INSERT INTO documents (user_id, name, description, category, content, posted_date)
     VALUES (user_id, name, description, category::document_category, content, posted_date)
         RETURNING id INTO document_id;
     
-    FOREACH id IN ARRAY authorized_users
+    FOREACH loop_id IN ARRAY authorized_users
             LOOP
                 INSERT INTO document_user_permissions (document_id, user_id)
-                VALUES (document_id, user_id);
+                VALUES (document_id, loop_id);
     END LOOP;
     
-        FOREACH id IN ARRAY authorized_groups
+        FOREACH loop_id IN ARRAY authorized_groups
             LOOP
                 INSERT INTO document_group_permissions (document_id, group_id)
-                VALUES (document_id, id);
+                VALUES (document_id, loop_id);
     END LOOP;
 END; $$;
 
