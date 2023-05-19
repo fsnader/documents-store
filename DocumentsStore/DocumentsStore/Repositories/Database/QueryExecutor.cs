@@ -25,13 +25,18 @@ public class QueryExecutor : IQueryExecutor
         }
         catch (PostgresException ex)
         {
-            _logger.LogError(ex, "Error executing query");
-            
+            _logger.LogError(ex, "Postgresql error executing query");
+
             if (ex.SqlState == PostgresErrorCodes.UniqueViolation)
             {
                 throw new UniqueException();
             }
 
+            throw;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Postgresql error executing query");
             throw;
         }
     }
