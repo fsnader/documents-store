@@ -28,7 +28,7 @@ public static class HttpClientExtensions
         var payload = new CreateUserDto
         {
             Name = fixture.Create<string>(),
-            Email = fixture.Create<string>(),
+            Email = fixture.CreateEmail(),
             Role = role,
         };
         

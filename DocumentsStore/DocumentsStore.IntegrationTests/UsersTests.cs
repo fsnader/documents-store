@@ -39,7 +39,9 @@ public class UsersTests : IClassFixture<WebApplicationFactory<Program>>, IAsyncL
     public async Task CreateUser_Success()
     {
         // Arrange
-        var payload = _fixture.Create<CreateUserDto>();
+        var payload = _fixture.Build<CreateUserDto>()
+            .With(c => c.Email, _fixture.CreateEmail())
+            .Create();
         
         // Act
         var response = await _client.PostAsJsonAsync("/api/users", payload);
@@ -82,7 +84,9 @@ public class UsersTests : IClassFixture<WebApplicationFactory<Program>>, IAsyncL
     public async Task UpdateUser_Success()
     {
         // Arrange
-        var payload = _fixture.Create<CreateUserDto>();
+        var payload = _fixture.Build<CreateUserDto>()
+            .With(c => c.Email, _fixture.CreateEmail())
+            .Create();
         
         // Act
         var response = await _client.PutAsJsonAsync($"/api/users/{_user.Id}", payload);

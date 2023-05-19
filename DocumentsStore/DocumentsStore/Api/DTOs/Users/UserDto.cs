@@ -20,16 +20,5 @@ public record UserDto
 
     public static IEnumerable<UserDto> CreateFromUsers(IEnumerable<User> users)
         => users.Select(CreateFromUser);
-
-    public User ConvertToUser()
-    {
-        return new User
-        {
-            Id = Id,
-            Name = Name,
-            Email = Email,
-            Role = Role,
-        };
-    }
 }
 

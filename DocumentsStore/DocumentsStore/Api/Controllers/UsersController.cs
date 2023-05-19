@@ -75,7 +75,7 @@ namespace DocumentsStore.Api.Controllers
 
         [HttpPut("{id}")]
         [ProducesResponseType(typeof(UserDto), 200)]
-        public async Task<IActionResult> Put(int id, [FromBody] UserDto user, CancellationToken cancellationToken)
+        public async Task<IActionResult> Put(int id, [FromBody] CreateUserDto user, CancellationToken cancellationToken)
         {
             var result = await _updateUser.ExecuteAsync(
                 id,

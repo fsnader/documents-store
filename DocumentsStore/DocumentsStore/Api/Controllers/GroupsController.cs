@@ -53,7 +53,7 @@ namespace DocumentsStore.Api.Controllers
 
         [HttpPost]
         [ProducesResponseType(typeof(GroupDto), 200)]
-        public async Task<IActionResult> Post([FromBody] GroupDto group, CancellationToken cancellationToken)
+        public async Task<IActionResult> Post([FromBody] CreateGroupDto group, CancellationToken cancellationToken)
         {
             var result = await _createGroup.ExecuteAsync(
                 group.ConvertToGroup(), 
@@ -64,7 +64,7 @@ namespace DocumentsStore.Api.Controllers
 
         [HttpPut("{id}")]
         [ProducesResponseType(typeof(GroupDto), 200)]
-        public async Task<IActionResult> Put(int id, [FromBody] GroupDto group, CancellationToken cancellationToken)
+        public async Task<IActionResult> Put(int id, [FromBody] CreateGroupDto group, CancellationToken cancellationToken)
         {
             var result = await _updateGroup.ExecuteAsync(
                 id,

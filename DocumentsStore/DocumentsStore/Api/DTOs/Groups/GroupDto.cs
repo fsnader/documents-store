@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using DocumentsStore.Domain;
 
 namespace DocumentsStore.Api.DTOs.Groups;
@@ -16,11 +17,4 @@ public class GroupDto
 
     public static IEnumerable<GroupDto> CreateFromGroups(IEnumerable<Group> groups) 
         => groups.Select(CreateFromGroup);
-
-    public Group ConvertToGroup() =>
-        new Group
-        {
-            Id = Id,
-            Name = Name,
-        };
 }
