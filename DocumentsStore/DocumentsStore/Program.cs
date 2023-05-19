@@ -1,6 +1,7 @@
 using System.Text;
 using System.Text.Json.Serialization;
 using DocumentsStore.Api.Authorization;
+using DocumentsStore.Api.Middlewares;
 using DocumentsStore.Repositories;
 using DocumentsStore.UseCases;
 using Microsoft.IdentityModel.Tokens;
@@ -18,6 +19,13 @@ public class Program
         // Add services to the container.
         builder.Services.AddRepositories();
         builder.Services.AddUseCases();
+        builder.Services.AddScoped<GlobalExceptionsMiddleware>();
+
+        builder.Services.AddLogging(config =>
+        {
+            config.AddConsole();
+            config.AddDebug();
+        });
 
         builder.Services.AddControllers()
             .AddJsonOptions(options =>
@@ -56,6 +64,8 @@ public class Program
         });
 
         var app = builder.Build();
+
+        app.UseMiddleware<GlobalExceptionsMiddleware>();
 
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
