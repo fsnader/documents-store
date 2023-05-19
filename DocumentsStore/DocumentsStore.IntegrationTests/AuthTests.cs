@@ -53,10 +53,11 @@ namespace DocumentsStore.IntegrationTests
         public async Task SignupUser()
         {
             // Arrange
+
             var payload = new
             {
                 Name = _fixture.Create<string>(),
-                Email = _fixture.Create<string>(),
+                Email = _fixture.CreateEmail(),
                 Role = Role.Admin,
             };
             
