@@ -3,55 +3,55 @@ namespace DocumentsStore.Repositories.Queries;
 public static class DocumentQueries
 {
     public const string GetUsersPermissions = @"
-        SELECT ""UserId""
-        FROM ""DocumentUserPermission""
-        WHERE ""DocumentId"" = @DocumentId
+        SELECT user_id
+        FROM document_user_permissions
+        WHERE document_id = @DocumentId
     ";
     
     public const string GetGroupsPermissions = @"
-        SELECT ""GroupId""
-        FROM ""DocumentGroupPermission""
-        WHERE ""DocumentId"" = @DocumentId
+        SELECT group_id
+        FROM document_group_permissions
+        WHERE document_id = @DocumentId
     ";
     
     public const string InsertUsePermission = @"
-        INSERT INTO ""DocumentUserPermission"" (""DocumentId"", ""UserId"")
+        INSERT INTO document_user_permissions (document_id, user_id)
         VALUES (@DocumentId, @UserId);";
     
     public const string RemoveUserPermission = @"
-        DELETE FROM ""DocumentUserPermission""
-        WHERE ""DocumentId"" = @DocumentId AND ""UserId"" = @UserId;";
+        DELETE FROM document_user_permissions
+        WHERE document_id = @DocumentId AND user_id = @UserId;";
 
     public const string InsertGroupPermission = @"
-        INSERT INTO ""DocumentGroupPermission"" (""DocumentId"", ""GroupId"")
+        INSERT INTO document_group_permissions (document_id, group_id)
         VALUES (@DocumentId, @GroupId);";
     
     public const string RemoveGroupPermission = @"
-        DELETE FROM ""DocumentGroupPermission""
-        WHERE ""DocumentId"" = @DocumentId AND ""GroupId"" = @GroupId;";
+        DELETE FROM document_group_permissions
+        WHERE document_id = @DocumentId AND group_id = @GroupId;";
 
     public const string GetDocumentById = @"
         SELECT *
-        FROM ""Document""
-        WHERE ""Id"" = @Id;
+        FROM documents
+        WHERE id = @Id;
     ";
 
     public const string CheckUserDocumentPermission = @"
         SELECT EXISTS (
-            SELECT 1 FROM ""Document""
-            WHERE ""Id"" = @DocumentId
+            SELECT 1 FROM documents
+            WHERE id = @DocumentId
             AND (
-                ""UserId"" = @UserId
+                user_id = @UserId
                 OR EXISTS (
-                    SELECT 1 FROM ""DocumentUserPermission""
-                    WHERE ""DocumentId"" = @DocumentId
-                    AND ""UserId"" = @UserId
+                    SELECT 1 FROM document_user_permissions
+                    WHERE document_id = @DocumentId
+                    AND user_id = @UserId
                 )
                 OR EXISTS (
-                    SELECT 1 FROM ""DocumentGroupPermission""
-                    INNER JOIN ""UserGroup"" ON ""UserGroup"".""GroupId"" = ""DocumentGroupPermission"".""GroupId""
-                    WHERE ""DocumentGroupPermission"".""DocumentId"" = @DocumentId
-                    AND ""UserGroup"".""UserId"" = @UserId
+                    SELECT 1 FROM document_group_permissions
+                    INNER JOIN user_groups ON user_groups.group_id = document_group_permissions.group_id
+                    WHERE document_group_permissions.document_id = @DocumentId
+                    AND user_groups.user_id = @UserId
                 )
             )
         );
@@ -59,22 +59,22 @@ public static class DocumentQueries
 
     public static readonly string ListUserAuthorizedDocuments = @"
     SELECT d.*
-        FROM ""Document"" d
-        INNER JOIN ""DocumentUserPermission"" dup ON d.""Id"" = dup.""DocumentId""
-        INNER JOIN ""User"" u ON dup.""UserId"" = u.""Id""
-        WHERE dup.""UserId"" = @UserId
+        FROM documents d
+        INNER JOIN document_user_permissions dup ON d.id = dup.document_id
+        INNER JOIN users u ON dup.user_id = u.id
+        WHERE dup.user_id = @UserId
     UNION
         SELECT *
-        FROM ""Document""
-        WHERE ""UserId"" = @UserId
+        FROM documents
+        WHERE user_id = @UserId
     UNION
         SELECT d.*
-        FROM ""Document"" d
-            INNER JOIN ""DocumentGroupPermission"" dgp ON d.""Id"" = dgp.""DocumentId""
-            INNER JOIN ""UserGroup"" gu ON dgp.""GroupId"" = gu.""GroupId""
-            INNER JOIN ""User"" u ON gu.""UserId"" = u.""Id""
-        WHERE gu.""UserId"" = @UserId
-    ORDER BY ""PostedDate"" DESC
+        FROM documents d
+            INNER JOIN document_group_permissions dgp ON d.id = dgp.document_id
+            INNER JOIN user_groups gu ON dgp.group_id = gu.group_id
+            INNER JOIN users u ON gu.user_id = u.id
+        WHERE gu.user_id = @UserId
+    ORDER BY posted_date DESC
     LIMIT @Take OFFSET @Skip;
 ";
 }
