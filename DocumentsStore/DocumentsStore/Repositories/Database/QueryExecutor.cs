@@ -17,10 +17,10 @@ public class QueryExecutor : IQueryExecutor
 
     public async Task<T> ExecuteQueryAsync<T>(Func<IDbConnection, Task<T>> queryDelegate, CancellationToken cancellationToken)
     {
-        using var connection = _dbConnectionFactory.GenerateConnection();
-
         try
         {
+            using var connection = _dbConnectionFactory.GenerateConnection();
+
             return await queryDelegate(connection);
         }
         catch (PostgresException ex)
