@@ -3,19 +3,19 @@ namespace DocumentsStore.Repositories.Queries;
 public static class GroupUsersQueries
 {
     public const string AddUserToGroup = @"
-        INSERT INTO ""UserGroup"" (""UserId"", ""GroupId"")
+        INSERT INTO user_groups (user_id, group_id)
         VALUES (@UserId, @GroupId);
     ";
 
     public const string RemoveUserFromGroup = @"
-        DELETE FROM ""UserGroup""
-        WHERE ""UserId"" = @UserId AND ""GroupId"" = @GroupId;
+        DELETE FROM user_groups
+        WHERE user_id = @UserId AND group_id = @GroupId;
     ";
 
     public const string GetGroupsByUserId = @"
             SELECT g.*
-            FROM ""Group"" g
-            JOIN ""UserGroup"" ug ON g.""Id"" = ug.""GroupId""
-            WHERE ug.""UserId"" = @UserId
+            FROM groups g
+            JOIN user_groups ug ON g.id = ug.group_id
+            WHERE ug.user_id = @UserId
         ";
 }

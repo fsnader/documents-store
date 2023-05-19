@@ -37,7 +37,7 @@ public class DocumentsRepository : IDocumentsRepository
         parameters.Add("authorized_groups", authorizedGroups);
         parameters.Add("document_id", direction: ParameterDirection.InputOutput);
 
-        await connection.ExecuteAsync("\"CreateDocument\"", parameters, commandType: CommandType.StoredProcedure);
+        await connection.ExecuteAsync("create_document", parameters, commandType: CommandType.StoredProcedure);
         
         document.Id = parameters.Get<int>("document_id");
 
