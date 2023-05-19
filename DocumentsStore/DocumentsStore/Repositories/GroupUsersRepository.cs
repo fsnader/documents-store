@@ -2,62 +2,49 @@ using Dapper;
 using DocumentsStore.Domain;
 using DocumentsStore.Repositories.Abstractions;
 using DocumentsStore.Repositories.Database;
-using DocumentsStore.Repositories.Exceptions;
 using DocumentsStore.Repositories.Queries;
-using Npgsql;
 
 namespace DocumentsStore.Repositories;
 
 public class GroupUsersRepository : IGroupUsersRepository
 {
-    private readonly IDbConnectionFactory _connectionFactory;
+    private readonly IQueryExecutor _queryExecutor;
 
-    public GroupUsersRepository(IDbConnectionFactory connectionFactory)
-    {
-        _connectionFactory = connectionFactory;
-    }
+    public GroupUsersRepository(IQueryExecutor queryExecutor) => _queryExecutor = queryExecutor;
 
-    public async Task<IEnumerable<Group>> AddUserToGroupAsync(int userId, int groupId, CancellationToken cancellationToken)
-    {
-        // TODO: Make the unique constraint exception handling global
-        try
+    public async Task<IEnumerable<Group>> AddUserToGroupAsync(int userId, int groupId,
+        CancellationToken cancellationToken) =>
+        await _queryExecutor.ExecuteQueryAsync(async connection =>
         {
-            using var db = _connectionFactory.GenerateConnection();
-
-            var parameters = new { UserId = userId, GroupId = groupId };
-
-            await db.ExecuteAsync(GroupUsersQueries.AddUserToGroup, parameters);
+            await connection.ExecuteAsync(
+                GroupUsersQueries.AddUserToGroup,
+                new
+                {
+                    UserId = userId,
+                    GroupId = groupId
+                });
 
             return await GetGroupsByUserIdAsync(userId, cancellationToken);
-        }
-        catch (PostgresException ex)
+        }, cancellationToken);
+
+    public async Task<IEnumerable<Group>> RemoveUserFromGroupAsync(int userId, int groupId,
+        CancellationToken cancellationToken) =>
+        await _queryExecutor.ExecuteQueryAsync(async connection =>
         {
-            if (ex.SqlState == PostgresErrorCodes.UniqueViolation)
-            {
-                throw new UniqueException();
-            }
-            
-            throw;
-        }
-    }
+            await connection.ExecuteAsync(
+                GroupUsersQueries.RemoveUserFromGroup,
+                new
+                {
+                    UserId = userId,
+                    GroupId = groupId
+                });
 
-    public async Task<IEnumerable<Group>> RemoveUserFromGroupAsync(int userId, int groupId, CancellationToken cancellationToken)
-    {
-        using var db = _connectionFactory.GenerateConnection();
-        
-        var parameters = new { UserId = userId, GroupId = groupId };
+            return await GetGroupsByUserIdAsync(userId, cancellationToken);
+        }, cancellationToken);
 
-        await db.ExecuteAsync(GroupUsersQueries.RemoveUserFromGroup, parameters);
-
-        return await GetGroupsByUserIdAsync(userId, cancellationToken);
-    }
-    
-    public async Task<IEnumerable<Group>> GetGroupsByUserIdAsync(int userId, CancellationToken cancellationToken)
-    {
-        using var db = _connectionFactory.GenerateConnection();
-
-        var parameters = new { UserId = userId };
-
-        return await db.QueryAsync<Group>(GroupUsersQueries.GetGroupsByUserId, parameters);
-    }
+    public async Task<IEnumerable<Group>> GetGroupsByUserIdAsync(int userId, CancellationToken cancellationToken) =>
+        await _queryExecutor.ExecuteQueryAsync(
+            async connection => await connection.QueryAsync<Group>(
+                GroupUsersQueries.GetGroupsByUserId,
+                new { UserId = userId }), cancellationToken);
 }

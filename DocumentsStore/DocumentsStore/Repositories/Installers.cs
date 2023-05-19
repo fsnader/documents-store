@@ -10,6 +10,7 @@ public static class Installers
     {
         return serviceCollection
             .AddSingleton<IDbConnectionFactory, DbConnectionFactory>()
+            .AddSingleton<IQueryExecutor, QueryExecutor>()
             .AddScoped<IUsersRepository, UsersRepository>()
             .AddScoped<IGroupsRepository, GroupsRepository>()
             .AddScoped<IGroupUsersRepository, GroupUsersRepository>()
